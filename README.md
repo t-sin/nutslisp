@@ -1,6 +1,6 @@
-# golilang
+# Mark
 
-Little Lisp awakes on Golang.
+Little Common Lisp awakes on Golang.
 
 > Mark wakes up.
 > --- "The Squirrel Awakes" by Toh Enjoe
