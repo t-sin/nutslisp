@@ -1,12 +1,11 @@
 # Mark
 
-Little Common Lisp awakes on Golang.
+Little squirrel awakes on Golang.
 
 > Mark wakes up.
 > --- "The Squirrel Awakes" by Toh Enjoe
 
 ## Goals
 
-* Understanding Lisp
-* Understanding language implementation
-* Understanding Golang
+* Understanting Mark
+* Understanting Toh Enjoe
