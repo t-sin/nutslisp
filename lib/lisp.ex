@@ -36,6 +36,8 @@ defmodule Mark.Lisp do
   Read expression as string.
   """
   def read(str) do
+    chlis = to_charlist(str)
+    {_, rest} = skip_whitespace(chlis)
   end
 
   @doc """
