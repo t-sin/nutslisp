@@ -1,4 +1,4 @@
-defmodule Lisp do
+defmodule Mark.Lisp do
   @moduledoc """
   Lisp implementation to implement Mark the squirrel.
   """
