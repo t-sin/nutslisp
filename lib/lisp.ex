@@ -18,6 +18,21 @@ defmodule Mark.Lisp do
     end
   end
 
+  def skip_whitespace(chlis, acc \\ []) do
+    whitespace? = fn ch ->
+      not (ch == ?  or ch == ?\n or ch == ?\t)
+    end
+    {_, ch, rest} = read_to(whitespace?, chlis)
+    [ch | rest]
+  end
+
+  def read_paren(chlis) do
+    case read_to(?(, chlis) do
+      {nil, _} -> read_paren(chlis)
+    end
+  end
+
+  @doc """
   Read expression as string.
   """
   def read(str) do
