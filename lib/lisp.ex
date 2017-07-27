@@ -37,7 +37,15 @@ defmodule Mark.Lisp do
   """
   def read(str) do
     chlis = to_charlist(str)
-    {_, rest} = skip_whitespace(chlis)
+    chlis = skip_whitespace(chlis)
+    [ch | rest] = chlis
+
+    cond do
+      ch == ?( ->
+        :list
+      true ->
+        :otherwise
+    end
   end
 
   @doc """
