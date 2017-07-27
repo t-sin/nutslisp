@@ -18,7 +18,7 @@ defmodule Mark.Lisp do
     end
   end
 
-  def skip_whitespace(chlis, acc \\ []) do
+  defp skip_whitespace(chlis, acc \\ []) do
     whitespace? = fn ch ->
       not (ch == ?  or ch == ?\n or ch == ?\t)
     end
