@@ -1,6 +1,6 @@
 # Mark
 
-Little squirrel awakes on Golang.
+Little squirrel awakes.
 
 > Mark wakes up.
 > --- "The Squirrel Awakes" by Toh Enjoe
