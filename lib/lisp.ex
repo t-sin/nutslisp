@@ -4,6 +4,20 @@ defmodule Mark.Lisp do
   """
 
   @doc """
+  Read charlist to the point of f satisfied.
+  f = fn ch -> <boolean> end
+  """
+  defp read_to(f, chlis, acc \\ []) do
+    case chlis do
+      [] -> {nil, nil, chlis}
+      [ch | rest] -> if f.(ch) == true do
+        {acc, ch, rest}
+      else
+        read_to(f, rest, acc ++ [ch])
+      end
+    end
+  end
+
   Read expression as string.
   """
   def read(str) do
