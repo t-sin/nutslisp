@@ -16,7 +16,7 @@ defmodule Mark.Lisp do
   Read charlist to the point of f satisfied.
   f = fn ch -> <boolean> end
   """
-  defp read_to(f, chlis, acc \\ []) do
+  def read_to(f, chlis, acc \\ []) do
     case chlis do
       [] -> {nil, nil, chlis}
       [ch | rest] -> if f.(ch) == false do
@@ -27,8 +27,9 @@ defmodule Mark.Lisp do
     end
   end
 
-  defp skip_whitespace(chlis, acc \\ []) do
-    {_, ch, rest} = read_to(whitespace?, chlis)
+  def read_integer(chlis, acc \\ []) do
+  def skip_whitespace(chlis, acc \\ []) do
+    {_, ch, rest} = read_to(&whitespace?/1, chlis)
     [ch | rest]
   end
 
