@@ -3,6 +3,10 @@ defmodule Mark.Lisp do
   Lisp implementation to implement Mark the squirrel.
   """
 
+  def whitespace?(ch) do
+    ch == ?  or ch == ?\n or ch == ?\t
+  end
+
   @doc """
   Read charlist to the point of f satisfied.
   f = fn ch -> <boolean> end
@@ -19,9 +23,6 @@ defmodule Mark.Lisp do
   end
 
   defp skip_whitespace(chlis, acc \\ []) do
-    whitespace? = fn ch ->
-      not (ch == ?  or ch == ?\n or ch == ?\t)
-    end
     {_, ch, rest} = read_to(whitespace?, chlis)
     [ch | rest]
   end
