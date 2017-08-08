@@ -14,7 +14,7 @@ defmodule Mark.Lisp do
   defp read_to(f, chlis, acc \\ []) do
     case chlis do
       [] -> {nil, nil, chlis}
-      [ch | rest] -> if f.(ch) == true do
+      [ch | rest] -> if f.(ch) == false do
         {acc, ch, rest}
       else
         read_to(f, rest, acc ++ [ch])
