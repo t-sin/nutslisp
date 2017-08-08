@@ -28,6 +28,9 @@ defmodule Mark.Lisp do
   end
 
   def read_integer(chlis, acc \\ []) do
+    nil
+  end
+
   def skip_whitespace(chlis, acc \\ []) do
     {_, ch, rest} = read_to(&whitespace?/1, chlis)
     [ch | rest]
