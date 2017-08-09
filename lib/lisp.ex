@@ -12,6 +12,10 @@ defmodule Mark.Lisp do
     ch == ?6 or ch == ?7 or ch == ?8 or ch == ?7 or ch == ?8 or ch == ?9
   end
 
+  def float?(ch) do
+    digit?(ch) or ch == ?.
+  end
+
   @doc """
   Read charlist to the point of f satisfied.
   f = fn ch -> <boolean> end
@@ -38,6 +42,10 @@ defmodule Mark.Lisp do
   end
 
   def read_float(chlis, acc \\ []) do
+    {s, ch, rest} = read_to(&float?/1, chlis)
+    {s, [ch | rest]}
+  end
+
   def read_paren(chlis) do
     case read_to(?(, chlis) do
       {nil, _} -> read_paren(chlis)
