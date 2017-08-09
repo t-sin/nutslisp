@@ -38,15 +38,15 @@ defmodule Mark.Lisp do
 
   def read_integer(chlis, acc \\ []) do
     {s, ch, rest} = read_to(&digit?/1, chlis)
-    {s, [ch | rest]}
+    {Integer.parse(s), [ch | rest]}
   end
 
   def read_float(chlis, acc \\ []) do
     {s, ch, rest} = read_to(&float?/1, chlis)
     if Enum.count(s, fn ch -> ch == ?. end) == 1 do
-      {s, [ch | rest]}
+      {Float.parse(s), [ch | rest]}
     else
-      {'', chlis}
+      {nil, chlis}
     end
   end
 
