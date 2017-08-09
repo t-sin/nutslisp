@@ -27,15 +27,17 @@ defmodule Mark.Lisp do
     end
   end
 
-  def read_integer(chlis, acc \\ []) do
-    nil
-  end
-
   def skip_whitespace(chlis, acc \\ []) do
     {_, ch, rest} = read_to(&whitespace?/1, chlis)
     [ch | rest]
   end
 
+  def read_integer(chlis, acc \\ []) do
+    {s, ch, rest} = read_to(&digit?/1, chlis)
+    {s, [ch | rest]}
+  end
+
+  def read_float(chlis, acc \\ []) do
   def read_paren(chlis) do
     case read_to(?(, chlis) do
       {nil, _} -> read_paren(chlis)
