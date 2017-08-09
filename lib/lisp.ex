@@ -43,7 +43,11 @@ defmodule Mark.Lisp do
 
   def read_float(chlis, acc \\ []) do
     {s, ch, rest} = read_to(&float?/1, chlis)
-    {s, [ch | rest]}
+    if Enum.count(s, fn ch -> ch == ?. end) == 1 do
+      {s, [ch | rest]}
+    else
+      {'', chlis}
+    end
   end
 
   def read_paren(chlis) do
