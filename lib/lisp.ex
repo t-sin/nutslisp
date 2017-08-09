@@ -16,6 +16,10 @@ defmodule Mark.Lisp do
     digit?(ch) or ch == ?.
   end
 
+  def time_char?(ch) do
+    digit?(ch) or ch == ?:
+  end
+
   @doc """
   Read charlist to the point of f satisfied.
   f = fn ch -> <boolean> end
@@ -48,6 +52,14 @@ defmodule Mark.Lisp do
     else
       {nil, chlis}
     end
+  end
+
+  @doc "#THH:MM:SS"
+  def read_time(chlis, acc \\ []) do
+    if Enum.slice(chlis, 0..2) == '#T' do
+      nil
+    else
+      {nil, chlis}
   end
 
   def read_paren(chlis) do
