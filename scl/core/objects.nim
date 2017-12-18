@@ -59,7 +59,7 @@ type
 
   SyntaxTypeTable* = TableRef[LispCodepoint, SyntaxType]
   ConstTraitTable* = TableRef[LispCodepoint, ConstituentTraitList]
-  DispatchMacroSeq* = array[int32, LispCodepoint]
+  DispatchMacroTable* = TableRef[seq[LispCodepoint], proc ()]
 
   ReadtableCase* = enum
     rcUpcase, rcDowncase, rcPreserve, rcInvert
@@ -71,7 +71,7 @@ type
     syntaxType*: SyntaxTypeTable
     constituentTrait*: ConstTraitTable
     singleMacro*: TableRef[LispCodepoint, proc ()]
-    dispatchMacro*: TableRef[DispatchMacroSeq, proc ()]
+    dispatchMacro*: DispatchMacroTable
 
     rcase*: ReadtableCase
     newlineType*: NewlineType
