@@ -9,3 +9,7 @@ Little squirrel awakes.
 
 * Understanting Mark
 * Understanting Toh Enjoe
+
+## License
+
+This program *Mark* is licensed under the GNU General Public License Version 3. See <COPYING> for details.
