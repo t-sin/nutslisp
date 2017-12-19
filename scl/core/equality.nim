@@ -13,31 +13,44 @@ proc b2lb(b: bool): LispT =
 template objAreTyped(t: untyped): untyped =
   obj1 of t and obj2 of t
 
-# macro eqMacro(t: untyped, eqexp: untyped): typed =
-#   var source = ""
-#   source &= "var o1 = cast[" & t & "](obj1)\n"
-#   source &= "var o2 = cast[" & t & "](obj2)\n"
-#   source &= "return " & eqexp & "\n"
-#   return macros.parseStmt(source)
+macro eqReturn(t: untyped, eqexp: untyped): typed =
+  result = newNimNode(nnkStmtList)
+  for n in 1..2:
+    var
+      varDef = newNimNode(nnkVarSection)
+      identDef = newNimNode(nnkIdentDefs)
+      castExp = newNimNode(nnkCast)
+
+    castExp.add(t)
+    castExp.add(newIdentNode("obj" & $(n)))
+    identDef.add(newIdentNode("o" & $(n)))
+    identDef.add(newEmptyNode())
+    identDef.add(castExp)
+    varDef.add(identDef)
+    result.add(varDef)
+
+  var
+    returnStmt = newNimNode(nnkReturnStmt)
+    callStmt = newNimNode(nnkCall)
+  callStmt.add(newIdentNode("b2lb"))
+  callStmt.add(eqexp)
+  returnStmt.add(callStmt)
+  result.add(returnStmt)
+
 
 proc eq(obj1: LispT, obj2: LispT): LispT =
   if objAreTyped(LispCharacter):
-    var
-      ch1 = cast[LispCharacter](obj1)
-      ch2 = cast[LispCharacter](obj2)
-    return b2lb(ch1.codepoint == ch2.codepoint)
+    eqReturn(LispCharacter, o1.codepoint == o2.codepoint)
 
   elif objAreTyped(LispNull):
-    return b2lb(true)
+    eqReturn(LispNull, true)
 
   elif objAreTyped(LispSymbol):
-    var
-      s1 = cast[LispSymbol](obj1)
-      s2 = cast[LispSymbol](obj2)
-    return b2lb(s1.name == s2.name)
+    eqReturn(LispSymbol, o1.name == o2.name)
 
   else:
     return b2lb(false)
 
 when isMainModule:
-  echo write(eq(LispSymbol(name: "hoge"), LispSymbol(name: "hoge")))
+  # echo write(eq(LispCharacter(codepoint: ord('\x1F4A9')), LispCharacter(codepoint: ord('\x1F4A9'))))
+  echo ord('π')
