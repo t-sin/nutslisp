@@ -12,4 +12,4 @@ Little squirrel awakes.
 
 ## License
 
-This program *Mark* is licensed under the GNU General Public License Version 3. See <COPYING> for details.
+This program *Mark* is licensed under the GNU General Public License Version 3. See [COPYING](COPYING) for details.
