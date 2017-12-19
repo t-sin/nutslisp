@@ -1,5 +1,5 @@
+import eq
 import objects
-import equality
 import print
 
 proc eval(obj: LispT): LispT =
