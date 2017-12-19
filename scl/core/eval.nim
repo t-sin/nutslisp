@@ -16,6 +16,15 @@ proc eval(obj: LispT): LispT =
     return s.value
 
   if obj of LispList:
+    proc eval_args(args: LispList): LispList =
+      if args.cdr of LispNull:
+        return LispList(car: eval(args.car),
+                        cdr: LispNull())
+      else:
+        var cdr = LispList(args.cdr)
+        return LispList(car: eval(args.car),
+                        cdr: eval_args(cdr))
+
     var
       c = LispList(obj)
       fn = LispSymbol(c.car)
@@ -26,7 +35,8 @@ proc eval(obj: LispT): LispT =
     if eq(fn, LispSymbol(name: "function")):
       return fn.function
     else:
-      return fn
+      var evaledArgs = eval_args(args)
+      return evaledArgs
 
   else:
     echo "[otherwise!!]"
@@ -37,7 +47,7 @@ import print
 when isMainModule:
   var o = eval(
     LispList(car: LispSymbol(name: "hogte"),
-             cdr: LispList (car: LispSymbol(name: "HOGE"),
+             cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
                             cdr: LispList(car: LispNull(),
                                           cdr: LispNull()))))
 
