@@ -1,4 +1,4 @@
-# Mark
+# Mark - Little squirrel program
 
 Little squirrel awakes.
 
