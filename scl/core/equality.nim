@@ -38,7 +38,7 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   result.add(returnStmt)
 
 
-proc eq(obj1: LispT, obj2: LispT): LispT =
+proc eq*(obj1: LispT, obj2: LispT): LispT =
   if objAreTyped(LispCharacter):
     eqReturn(LispCharacter, o1.codepoint == o2.codepoint)
 
