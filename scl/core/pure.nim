@@ -3,11 +3,11 @@ import strutils
 
 import objects
 
-proc b2lb(b: bool): LispT =
-  if b:
-    return LispT()
+proc atom*(obj: LispT): bool =
+  if obj of LispCons:
+    return false
   else:
-    return LispNull()
+    return true
 
 template objAreTyped(t: untyped): untyped =
   obj1 of t and obj2 of t
@@ -33,7 +33,6 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   returnStmt.add(eqexp)
   result.add(returnStmt)
 
-
 proc eq*(obj1: LispT, obj2: LispT): bool =
   if objAreTyped(LispCharacter):
     eqReturn(LispCharacter, o1.codepoint == o2.codepoint)
@@ -46,3 +45,12 @@ proc eq*(obj1: LispT, obj2: LispT): bool =
 
   else:
     return false
+
+proc car*(c: LispCons): LispT =
+  return c.car
+
+proc cdr*(c: LispCons): LispT =
+  return c.cdr
+
+proc cons*(obj1: LispT, obj2: LispT): LispT =
+  return LispCons(car: obj1, cdr: obj2)
