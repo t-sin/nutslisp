@@ -39,7 +39,7 @@ proc eval(obj: LispT): LispT =
       return evaledArgs
 
   else:
-    echo "[otherwise!!]"
+    echo "t"
     return obj
 
 import print
