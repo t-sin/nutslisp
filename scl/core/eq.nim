@@ -30,14 +30,11 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
 
   var
     returnStmt = newNimNode(nnkReturnStmt)
-    callStmt = newNimNode(nnkCall)
-  callStmt.add(newIdentNode("b2lb"))
-  callStmt.add(eqexp)
-  returnStmt.add(callStmt)
+  returnStmt.add(eqexp)
   result.add(returnStmt)
 
 
-proc eq*(obj1: LispT, obj2: LispT): LispT =
+proc eq*(obj1: LispT, obj2: LispT): bool =
   if objAreTyped(LispCharacter):
     eqReturn(LispCharacter, o1.codepoint == o2.codepoint)
 
@@ -48,4 +45,4 @@ proc eq*(obj1: LispT, obj2: LispT): LispT =
     eqReturn(LispSymbol, o1.name == o2.name)
 
   else:
-    return b2lb(false)
+    return false

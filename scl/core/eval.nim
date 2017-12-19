@@ -20,9 +20,10 @@ proc eval(obj: LispT): LispT =
       c = LispList(obj)
       fn = LispSymbol(c.car)
       args = LispList(c.cdr)
-    if eq(fn, LispSymbol(name: "quote")) of LispT:
+
+    if eq(fn, LispSymbol(name: "quote")):
       return c
-    if eq(fn, LispSymbol(name: "function")) of LispT:
+    if eq(fn, LispSymbol(name: "function")):
       return fn.function
     else:
       return fn
