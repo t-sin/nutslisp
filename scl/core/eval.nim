@@ -1,6 +1,6 @@
-import eq
 import objects
 import print
+import pure
 
 proc eval(obj: LispT): LispT =
   if (obj of LispCharacter or
