@@ -36,7 +36,6 @@ type
 
   LispFunction* = ref object of LispT
     #args*: LispLambdaList
-    # returnType*: LispTypeSpec
     doc*: string
     # env*: LispEnv
     nativeProc*: proc ()
