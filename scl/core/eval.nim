@@ -30,9 +30,9 @@ proc eval(obj: LispT): LispT =
       fn = LispSymbol(c.car)
       args = LispList(c.cdr)
 
-    if eq(fn, LispSymbol(name: "quote")):
+    if fn.name == "quote":
       return c
-    if eq(fn, LispSymbol(name: "function")):
+    if fn.name == "function":
       return fn.function
     else:
       var evaledArgs = eval_args(args)
