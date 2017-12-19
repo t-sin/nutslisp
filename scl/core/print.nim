@@ -5,11 +5,11 @@ proc write*(obj: LispT): string =
     return "nil"
 
   elif obj of LispCharacter:
-    var ch = cast[LispCharacter](obj)
+    var ch = LispCharacter(obj)
     return $(chr(ch.codepoint))
 
   elif obj of LispSymbol:
-    var s = cast[LispSymbol](obj)
+    var s = obj.LispSymbol
     return s.name
 
   elif obj of LispList:
@@ -18,7 +18,7 @@ proc write*(obj: LispT): string =
         return ""
       else:
         var
-          lis = cast[LispList](obj)
+          lis = LispList(obj)
           cdrstr = write_list(lis.cdr)
         if cdrstr.len == 0:
            return write(lis.car)
@@ -28,7 +28,7 @@ proc write*(obj: LispT): string =
     return "(" & write_list(obj) & ")"
 
   elif obj of LispCons:
-    var c = cast[LispCons](obj)
+    var c = LispCons(obj)
     return "(" & write(c.car) & " . " & write(c.cdr) & ")"
 
   else:

@@ -2,7 +2,6 @@ import macros
 import strutils
 
 import objects
-import print
 
 proc b2lb(b: bool): LispT =
   if b:
@@ -19,13 +18,13 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
     var
       varDef = newNimNode(nnkVarSection)
       identDef = newNimNode(nnkIdentDefs)
-      castExp = newNimNode(nnkCast)
+      callExp = newNimNode(nnkCall)
 
-    castExp.add(t)
-    castExp.add(newIdentNode("obj" & $(n)))
+    callExp.add(t)
+    callExp.add(newIdentNode("obj" & $(n)))
     identDef.add(newIdentNode("o" & $(n)))
     identDef.add(newEmptyNode())
-    identDef.add(castExp)
+    identDef.add(callExp)
     varDef.add(identDef)
     result.add(varDef)
 
@@ -50,7 +49,3 @@ proc eq*(obj1: LispT, obj2: LispT): LispT =
 
   else:
     return b2lb(false)
-
-when isMainModule:
-  # echo write(eq(LispCharacter(codepoint: ord('\x1F4A9')), LispCharacter(codepoint: ord('\x1F4A9'))))
-  echo ord('π')
