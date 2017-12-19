@@ -12,7 +12,7 @@ type
   LispSymbol* = ref object of LispT
     name*: string
     value*: LispT
-    # function*: function
+    function*: LispFunction
     package*: LispPackage
     plist*: LispList
 
@@ -39,7 +39,7 @@ type
     # returnType*: LispTypeSpec
     doc*: string
     # env*: LispEnv
-    nativeProc*: proc
+    nativeProc*: proc ()
 
 
   LispPackage* = ref object of LispT
