@@ -7,7 +7,7 @@ type
     parent*: LispEnvironment
     binding*: TableRef[string, LispT]
 
-  LispRuntime* = object of RootObj
+  LispRuntime* = ref object of RootObj
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
     currentPackage*: LispPackage
