@@ -4,7 +4,7 @@ import strutils
 import objects
 import environment
 
-proc atom*(obj: LispT): bool =
+proc lisp_atom*(rt, LispRuntime, obj: LispT): bool =
   if obj of LispCons:
     return false
   else:
@@ -47,11 +47,18 @@ proc eq*(obj1: LispT, obj2: LispT): bool =
   else:
     return false
 
-proc car*(c: LispCons): LispT =
+proc lisp_eq*(obj1: LispT, obj2: LispT): LispT =
+  var b = eq(obj1, obj2)
+  if b:
+    return LispT()
+  else:
+    return LispNull()
+
+proc lisp_car*(rt: LispRuntime, c: LispCons): LispT =
   return c.car
 
-proc cdr*(c: LispCons): LispT =
+proc lisp_cdr*(rt: LispRuntime, c: LispCons): LispT =
   return c.cdr
 
-proc cons*(obj1: LispT, obj2: LispT): LispT =
+proc lisp_cons*(rt: LispRuntime, obj1: LispT, obj2: LispT): LispT =
   return LispCons(car: obj1, cdr: obj2)
