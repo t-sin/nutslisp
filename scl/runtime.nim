@@ -1,3 +1,5 @@
+import tables
+
 import core.objects
 import core.environment
 import core.pure
@@ -8,9 +10,10 @@ proc initCorePackage*(rt: LispRuntime): LispRuntime =
     pkg = initPackage(pkgName, @[])
 
   # variable
-
+  discard lisp_intern(rt, "hoge", pkg)
   # functions
 
+  rt.packageTable[pkgName] = pkg
   return rt
 
 proc makeSclRuntime*(): LispRuntime =
@@ -25,3 +28,5 @@ proc makeSclRuntime*(): LispRuntime =
 when isMainModule:
   var
     rt = makeSclRuntime()
+
+  echo repr(rt.packageTable["scl.core"])

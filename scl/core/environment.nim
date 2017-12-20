@@ -31,6 +31,34 @@ proc initRuntime*(): LispRuntime =
   rt.packageTable = tables.newTable[string, LispPackage]()
   return rt
 
+proc getPackage(rt: LispRuntime,
+                pkgDesignator: LispT): LispPackage =
+  if pkgDesignator of LispPackage:
+    return LispPackage(pkgDesignator)
+  elif pkgDesignator of LispSymbol:
+    var s = LispSymbol(pkgDesignator)
+    return rt.packageTable[s.name]
+  else:
+    return nil
+
+proc intern(name: string,
+            package: LispPackage): (LispSymbol, string) =
+  if tables.hasKey(package.symbolTable, name):
+    return (package.symbolTable[name], "existed")  # internal or external
+  else:
+    var s = LispSymbol(name: name)
+    package.symbolTable[name] = s
+    return (s, "created")
+
+proc lisp_intern*(rt: LispRuntime,
+                 name: string,
+                 package: LispT): LispSymbol =
+  var pkg = getPackage(rt, package)
+  if isNil(pkg):
+    return intern(name, rt.currentPackage)[0]
+  else:
+    return intern(name, pkg)[0]
+
 proc resolveOnRuntime(s: LispSymbol,
                       rt: LispRuntime): (bool, LispT) =
   if tables.hasKey(rt.currentPackage.symbolTable, s.name):
@@ -57,4 +85,3 @@ proc bindValue*(rt: LispRuntime,
 
 proc unbindValue() =
   discard
-
