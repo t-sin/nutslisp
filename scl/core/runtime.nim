@@ -11,7 +11,6 @@ type
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
     currentPackage*: LispPackage
-    toplevelEnv*: LispEnvironment
 
 
 proc initEnvironment*(): LispEnvironment =
