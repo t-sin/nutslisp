@@ -35,9 +35,9 @@ type
 
 
   LispFunction* = ref object of LispT
-    #args*: LispLambdaList
+    args*: LispList
     doc*: string
-    # env*: LispEnv
+    env*: LispEnvironment
     nativeProc*: proc ()
 
 
@@ -74,6 +74,11 @@ type
 
     rcase*: ReadtableCase
     newlineType*: NewlineType
+
+
+  LispEnvironment* = ref object of RootObj
+    parent*: LispEnvironment
+    binding*: TableRef[string, LispT]
 
 
   LispCondition* = ref object of Exception

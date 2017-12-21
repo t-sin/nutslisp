@@ -2,11 +2,8 @@ import tables
 
 import objects
 
-type
-  LispEnvironment* = ref object of RootObj
-    parent*: LispEnvironment
-    binding*: TableRef[string, LispT]
 
+type
   LispRuntime* = ref object of RootObj
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
