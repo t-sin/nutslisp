@@ -3,6 +3,9 @@ import print
 import pure
 
 proc eval(obj: LispT): LispT =
+  if isNil(obj):
+    raise newException(Exception, "nil!!")
+
   if (obj of LispCharacter or
       obj of LispNumber or
       obj of LispNull or
