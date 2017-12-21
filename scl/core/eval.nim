@@ -38,8 +38,16 @@ proc eval(obj: LispT): LispT =
 
     if op.name == "quote":
       return c
+
     if op.name == "function":
       return op.function
+
+    if op.name == "setq":
+      return nil
+
+    if op.name == "cond":
+      return nil
+
     else:
       var lambdaList = parseLambdaList(args)
       return lambdaList
