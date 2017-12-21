@@ -33,13 +33,13 @@ proc eval(obj: LispT): LispT =
   if obj of LispList:
     var
       c = LispList(obj)
-      fn = LispSymbol(c.car)
+      op = LispSymbol(c.car)
       args = LispList(c.cdr)
 
-    if fn.name == "quote":
+    if op.name == "quote":
       return c
-    if fn.name == "function":
-      return fn.function
+    if op.name == "function":
+      return op.function
     else:
       var lambdaList = parseLambdaList(args)
       return lambdaList
