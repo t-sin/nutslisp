@@ -2,6 +2,18 @@ import objects
 import print
 import pure
 
+
+proc eval(obj: LispT): LispT
+
+proc parseLambdaList(args: LispList): LispList =
+  if args.cdr of LispNull:
+    return LispList(car: eval(args.car),
+                    cdr: LispNull())
+  else:
+    var cdr = LispList(args.cdr)
+    return LispList(car: eval(args.car),
+                    cdr: parseLambdaList(cdr))
+
 proc eval(obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
@@ -19,15 +31,6 @@ proc eval(obj: LispT): LispT =
     return s.value
 
   if obj of LispList:
-    proc eval_args(args: LispList): LispList =
-      if args.cdr of LispNull:
-        return LispList(car: eval(args.car),
-                        cdr: LispNull())
-      else:
-        var cdr = LispList(args.cdr)
-        return LispList(car: eval(args.car),
-                        cdr: eval_args(cdr))
-
     var
       c = LispList(obj)
       fn = LispSymbol(c.car)
@@ -38,8 +41,8 @@ proc eval(obj: LispT): LispT =
     if fn.name == "function":
       return fn.function
     else:
-      var evaledArgs = eval_args(args)
-      return evaledArgs
+      var lambdaList = parseLambdaList(args)
+      return lambdaList
 
   else:
     echo "t"
