@@ -2,7 +2,7 @@ import macros
 import strutils
 
 import objects
-import environment
+import runtime
 
 proc lisp_atom*(rt, LispRuntime, obj: LispT): bool =
   if obj of LispCons:

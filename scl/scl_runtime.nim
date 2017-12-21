@@ -1,7 +1,7 @@
 import tables
 
 import core.objects
-import core.environment
+import core.runtime
 import core.pure
 
 proc initCorePackage*(rt: LispRuntime): LispRuntime =
