@@ -1,7 +1,21 @@
 import tables
 
+
 type
+  LispObjectId* = uint32
   LispT* = ref object of RootObj
+    id*: LispObjectId
+
+var lispObjectCount*: LispObjectId = 0
+
+proc makeLispObject[LispType](): LispType =
+  var lispObj = LispType()
+  LispT(lispObj).id = lispObjectCount
+  lispObjectCount += 1
+  return LispType(lispObj)
+
+
+type
   LispNil* = ref object of LispT
 
   LispCons* = ref object of LispT
