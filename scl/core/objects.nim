@@ -8,11 +8,11 @@ type
 
 var lispObjectCount*: LispObjectId = 0
 
-proc makeLispObject[LispType](): LispType =
-  var lispObj = LispType()
+proc makeLispObject[L](): L =
+  var lispObj = L()
   LispT(lispObj).id = lispObjectCount
   lispObjectCount += 1
-  return LispType(lispObj)
+  return L(lispObj)
 
 
 type
@@ -58,7 +58,11 @@ type
   LispPackage* = ref object of LispT
     name*: string
     nicknames*: seq[string]
-    symbolTable*: TableRef[string, LispSymbol]
+    environment*: LispEnvironment
+
+  LispEnvironment* = ref object of LispT
+    parent*: LispEnvironment
+    binding*: TableRef[LispObjectId, LispT]
 
 
   SyntaxType* = enum
@@ -88,11 +92,6 @@ type
 
     rcase*: ReadtableCase
     newlineType*: NewlineType
-
-
-  LispEnvironment* = ref object of RootObj
-    parent*: LispEnvironment
-    binding*: TableRef[string, LispT]
 
 
   LispCondition* = ref object of Exception
