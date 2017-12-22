@@ -8,13 +8,17 @@ proc initCorePackage*(rt: LispRuntime): LispRuntime =
   var
     pkgName = "scl.core"
     pkg = initPackage(pkgName, @[])
+    s: LispSymbol
 
   # variable
-  discard lisp_intern(rt, "hoge", pkg)
+  s = makeLispObject[LispSymbol]()
+  s.name = "hoge"
+  discard lisp_intern(rt, s, pkg)
+
   # functions
 
   rt.packageTable[pkgName] = pkg
-  return rt
+  return pkg
 
 proc makeSclRuntime*(): LispRuntime =
   var
