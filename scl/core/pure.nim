@@ -50,9 +50,9 @@ proc eq*(obj1: LispT, obj2: LispT): bool =
 proc lisp_eq*(obj1: LispT, obj2: LispT): LispT =
   var b = eq(obj1, obj2)
   if b:
-    return LispT()
+    return makeLispObject[LispT]()
   else:
-    return LispNull()
+    return makeLispObject[LispNull]()
 
 proc lisp_car*(rt: LispRuntime, c: LispCons): LispT =
   return c.car

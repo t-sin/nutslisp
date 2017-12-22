@@ -9,13 +9,14 @@ proc makeEmptyReadtable*(): LispReadtable =
     constTraitTable = tables.newTable[LispCodepoint, ConstituentTraitList]()
     singleMacroTable = tables.newTable[LispCodepoint, proc ()]()
     dispatchMacroTable = tables.newTable[seq[LispCodepoint], proc ()]()
-    readtable = LispReadtable(
-      syntaxType: syntaxTypeTable,
-      constituentTrait: constTraitTable,
-      singleMacro: singleMacroTable,
-      dispatchMacro: dispatchMacroTable,
-      rcase: rcUpcase,
-      newlineType: nlLF)
+    readtable = makeLispObject[LispReadtable]()
+
+  readtable.syntaxType = syntaxTypeTable
+  readtable.constituentTrait = constTraitTable
+  readtable.singleMacro = singleMacroTable
+  readtable.dispatchMacro = dispatchMacroTable
+  readtable.rcase = rcUpcase
+  readtable.newlineType = nlLF
 
   return readtable
 

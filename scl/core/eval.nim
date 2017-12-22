@@ -8,7 +8,7 @@ proc eval(obj: LispT): LispT
 proc parseLambdaList(args: LispList): LispList =
   if args.cdr of LispNull:
     return LispList(car: eval(args.car),
-                    cdr: LispNull())
+                    cdr: makeLispObject[LispNull]())
   else:
     var cdr = LispList(args.cdr)
     return LispList(car: eval(args.car),

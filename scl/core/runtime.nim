@@ -10,18 +10,18 @@ type
     currentPackage*: LispPackage
 
 
+proc initEnvironment*(): LispEnvironment =
+  var env = makeLispObject[LispEnvironment]()
+  env.binding = newTable[LispObjectId, LispT]()
+  return env
+
 proc initPackage*(name: string,
                   nicknames: seq[string]): LispPackage =
   var pkg = LispPackage()
   pkg.name = name
   pkg.nicknames = nicknames
-  pkg.symbolTable = tables.newTable[string, LispSymbol]()
+  pkg.environment = initEnvironment()
   return pkg
-
-proc initEnvironment*(): LispEnvironment =
-  var env = LispEnvironment()
-  env.binding = newTable[string, LispT]()
-  return env
 
 proc initRuntime*(): LispRuntime =
   var rt = LispRuntime()
@@ -43,7 +43,8 @@ proc intern(name: string,
   if tables.hasKey(package.symbolTable, name):
     return (package.symbolTable[name], "existed")  # internal or external
   else:
-    var s = LispSymbol(name: name)
+    var s = makeLispObject[LispSymbol]()
+    s.name = name
     package.symbolTable[name] = s
     return (s, "created")
 
