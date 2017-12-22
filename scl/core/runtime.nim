@@ -38,42 +38,22 @@ proc getPackage(rt: LispRuntime,
   else:
     return nil
 
-proc intern(name: string,
+proc intern(name: LispSymbol,
             package: LispPackage): (LispSymbol, string) =
-  if tables.hasKey(package.symbolTable, name):
-    return (package.symbolTable[name], "existed")  # internal or external
+  if tables.hasKey(package.environment.binding, name.id):
+    return (name, "existed")  # internal or external
   else:
-    var s = makeLispObject[LispSymbol]()
-    s.name = name
-    package.symbolTable[name] = s
-    return (s, "created")
+    package.environment.binding[name.id] = name
+    return (name, "created")
 
 proc lisp_intern*(rt: LispRuntime,
-                 name: string,
-                 package: LispT): LispSymbol =
+                  name: LispSymbol,
+                  package: LispT): LispSymbol =
   var pkg = getPackage(rt, package)
   if isNil(pkg):
     return intern(name, rt.currentPackage)[0]
   else:
     return intern(name, pkg)[0]
-
-proc resolveOnRuntime(s: LispSymbol,
-                      rt: LispRuntime): (bool, LispT) =
-  if tables.hasKey(rt.currentPackage.symbolTable, s.name):
-    return (true, rt.currentPackage.symbolTable[s.name])
-  else:
-    return (false, nil)
-
-proc resolveName*(s: LispSymbol,
-                  rt: LispRuntime,
-                  env: LispEnvironment): (bool, LispT) =
-  if env == nil:
-    return resolveOnRuntime(s, rt)
-  elif tables.hasKey(env.binding, s.name):
-    return (true, env.binding[s.name])
-  else:
-    return resolveName(s, rt, env.parent)
-
 
 proc bindValue*(rt: LispRuntime,
                 s: LispSymbol,
