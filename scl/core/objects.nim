@@ -8,7 +8,7 @@ type
 
 var lispObjectCount*: LispObjectId = 0
 
-proc makeLispObject[L](): L =
+proc makeLispObject*[L](): L =
   var lispObj = L()
   LispT(lispObj).id = lispObjectCount
   lispObjectCount += 1
