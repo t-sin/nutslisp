@@ -43,6 +43,7 @@ proc intern(name: LispSymbol,
   if tables.hasKey(package.environment.binding, name.id):
     return (name, "existed")  # internal or external
   else:
+    name.package = package
     package.environment.binding[name.id] = name
     return (name, "created")
 
