@@ -1,3 +1,5 @@
+import tables
+
 import objects
 import print
 import pure
@@ -47,7 +49,13 @@ proc eval(env: LispEnvironment,
 
   if obj of LispSymbol:
     var s = LispSymbol(obj)
-    return s.value
+
+    if isNil(env):
+      return s.value
+    elif tables.hasKey(env.binding, s.id):
+      return env.binding[s.id]
+    else:
+      raise newException(Exception, "unbound-variable")
 
   if obj of LispList:
     var
@@ -78,10 +86,19 @@ proc eval(env: LispEnvironment,
 import print
 
 when isMainModule:
-  var o = eval(
-    LispList(car: LispSymbol(name: "setq"),
-             cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
-                            cdr: LispList(car: LispT(),
-                                          cdr: LispNull()))))
+  # var o = eval(
+  #   nil,
+  #   LispList(car: LispSymbol(name: "setq"),
+  #            cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
+  #                           cdr: LispList(car: LispT(),
+  #                                         cdr: LispNull()))))
+  var
+    s = makeLispObject[LispSymbol]()
+    env = makeLispObject[LispEnvironment]()
+  s.name = "symbol-name"
+  s.value = makeLispObject[LispNull]()
+  env.binding = tables.newTable[LispObjectId, LispT]()
+  env.binding[s.id] = makeLispObject[LispT]()
+  var o = eval(env, s)
 
   echo write(o)
