@@ -12,7 +12,7 @@ proc makeLispObject*[L](): L =
   var lispObj = L()
   LispT(lispObj).id = lispObjectCount
   lispObjectCount += 1
-  return L(lispObj)
+  return lispObj
 
 
 type
