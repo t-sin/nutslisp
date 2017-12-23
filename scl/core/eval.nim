@@ -5,6 +5,21 @@ import pure
 
 proc eval(obj: LispT): LispT
 
+proc evalSetq(pairs: LispList): LispT =
+  if pairs.cdr of LispNil:
+    raise newException(Exception, "invalid setq")
+  else:
+    var
+      rest = LispList(pairs.cdr)
+      sym = LispSymbol(pairs.car)
+      val = rest.car
+
+    sym.value = val
+    if rest.cdr of LispNull:
+      return val
+    else:
+      return evalSetq(LispList(rest.cdr))
+
 proc parseLambdaList(args: LispList): LispList =
   if args.cdr of LispNull:
     return LispList(car: eval(args.car),
@@ -43,7 +58,7 @@ proc eval(obj: LispT): LispT =
       return op.function
 
     if op.name == "setq":
-      return nil
+      return evalSetq(args)
 
     if op.name == "cond":
       return nil
@@ -60,9 +75,9 @@ import print
 
 when isMainModule:
   var o = eval(
-    LispList(car: LispSymbol(name: "hogte"),
+    LispList(car: LispSymbol(name: "setq"),
              cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
-                            cdr: LispList(car: LispNull(),
+                            cdr: LispList(car: LispT(),
                                           cdr: LispNull()))))
 
   echo write(o)
