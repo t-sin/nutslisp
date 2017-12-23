@@ -35,17 +35,11 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   result.add(returnStmt)
 
 proc eq*(obj1: LispT, obj2: LispT): bool =
-  if objAreTyped(LispCharacter):
-    eqReturn(LispCharacter, o1.codepoint == o2.codepoint)
-
-  elif objAreTyped(LispNull):
+  if objAreTyped(LispNull):
     eqReturn(LispNull, true)
 
-  elif objAreTyped(LispSymbol):
-    eqReturn(LispSymbol, o1.name == o2.name)
-
   else:
-    return false
+    return obj1.id == obj2.id
 
 proc lisp_eq*(obj1: LispT, obj2: LispT): LispT =
   var b = eq(obj1, obj2)
