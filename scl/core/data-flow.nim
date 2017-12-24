@@ -15,6 +15,7 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
       identDef = newNimNode(nnkIdentDefs)
       callExp = newNimNode(nnkCall)
 
+    result.add(macros.parseStmt("{.push hint[XDeclaredButNotUsed]: off.}"))
     callExp.add(t)
     callExp.add(newIdentNode("obj" & $(n)))
     identDef.add(newIdentNode("o" & $(n)))
@@ -22,6 +23,7 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
     identDef.add(callExp)
     varDef.add(identDef)
     result.add(varDef)
+    result.add(macros.parseStmt("{.pop.}"))
 
   var
     returnStmt = newNimNode(nnkReturnStmt)
