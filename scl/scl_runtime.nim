@@ -2,7 +2,7 @@ import tables
 
 import core.objects
 import core.runtime
-import core.pure
+
 
 proc initKeywordPackage(rt: LispRuntime): LispPackage =
   var
