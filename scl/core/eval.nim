@@ -75,7 +75,7 @@ proc eval(env: LispEnvironment,
     if op.name == "setq":
       return evalSetq(env, args)
 
-    if op.name == "cond":
+    if op.name == "if":
       return nil
 
     else:
