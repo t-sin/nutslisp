@@ -76,32 +76,35 @@ proc eval(env: LispEnvironment,
       return evalSetq(env, args)
 
     if op.name == "if":
-      return nil
+      var
+        pred = eval(env, args.car)
+        rest = LispList(args.cdr)
+        trueClause = rest.car
+        falseCons = rest.cdr
+
+      if pred of LispNull:
+        if falseCons of LispNull:
+          return makeLispObject[LispNull]()
+        else:
+          return eval(env, LispList(falseCons).car)
+      else:
+        return eval(env, trueClause)
 
     else:
       var lambdaList = parseLambdaList(env, args)
       return lambdaList
 
   else:
-    echo "t"
     return obj
 
 import print
 
 when isMainModule:
-  # var o = eval(
-  #   nil,
-  #   LispList(car: LispSymbol(name: "setq"),
-  #            cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
-  #                           cdr: LispList(car: LispT(),
-  #                                         cdr: LispNull()))))
-  var
-    s = makeLispObject[LispSymbol]()
-    env = makeLispObject[LispEnvironment]()
-  s.name = "symbol-name"
-  s.value = makeLispObject[LispNull]()
-  env.binding = tables.newTable[LispObjectId, LispT]()
-  env.binding[s.id] = makeLispObject[LispT]()
-  var o = eval(env, s)
+  var o = eval(
+    nil,
+    LispList(car: LispSymbol(name: "if"),
+             cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
+                            cdr: LispList(car: LispList(car: LispSymbol(name: "quote", value: LispSymbol(name: "FUGA", value: LispNull()))),
+                                          cdr: LispNull()))))
 
   echo write(o)
