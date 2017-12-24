@@ -10,7 +10,7 @@ var lispObjectCount*: LispObjectId = 0
 
 proc makeLispObject*[L](): L =
   var lispObj = L()
-  LispT(lispObj).id = lispObjectCount
+  lispObj.id = lispObjectCount
   lispObjectCount += 1
   return lispObj
 
