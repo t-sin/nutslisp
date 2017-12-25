@@ -8,7 +8,7 @@ proc atom*(obj: LispT): bool =
   else:
     return true
 
-proc lisp_atom*(rt, LispRuntime, obj: LispT): LispT =
+proc lisp_atom*(rt: LispRuntime, obj: LispT): LispT =
   nil
 
 proc lisp_car*(rt: LispRuntime, c: LispCons): LispT =
