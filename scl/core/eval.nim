@@ -52,6 +52,10 @@ proc bindLambdaList(env: LispEnvironment,
     return LispList(car: eval(env, args.car),
                     cdr: bindLambdaList(env, cdr))
 
+proc hello_fn(args: varargs[LispT]): LispT =
+  echo "first your function!!"
+  return makeLispObject[LispNull]()
+
 proc eval(env: LispEnvironment,
           obj: LispT): LispT =
   if isNil(obj):
@@ -102,7 +106,10 @@ proc eval(env: LispEnvironment,
     else:
       # var
       #   newEnv = bindLambdaList(env, args)
-      return nil
+      var fn = makeLispObject[LispFunction]()
+      fn.lambdaList = makeLispObject[LispNull]()
+      fn.body = hello_fn
+      return fn.body([])
 
   else:
     return obj
@@ -110,4 +117,6 @@ proc eval(env: LispEnvironment,
 import print
 
 when isMainModule:
-  discard
+  var result = eval(initEnvironment(),
+                    LispList(car: LispSymbol(name: "hoge"),
+                             cdr: LispNull()))

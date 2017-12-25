@@ -49,9 +49,8 @@ type
 
 
   LispFunction* = ref object of LispT
-    args*: LispList
-
-    nativeProc*: proc (args: varargs[LispT]): LispT
+    lambdaList*: LispList
+    body*: proc (args: varargs[LispT]): LispT
 
 
   LispPackage* = ref object of LispT
