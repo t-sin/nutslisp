@@ -50,9 +50,8 @@ type
 
   LispFunction* = ref object of LispT
     args*: LispList
-    doc*: string
-    env*: LispEnvironment
-    nativeProc*: proc ()
+
+    nativeProc*: proc (args: varargs[LispT]): LispT
 
 
   LispPackage* = ref object of LispT
