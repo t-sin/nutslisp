@@ -10,7 +10,7 @@ proc eval(env: LispEnvironment,
 
 proc evalSetq(env: LispEnvironment,
               pairs: LispList): LispT =
-  if pairs.cdr of LispNil:
+  if pairs.cdr of LispNull:
     raise newException(Exception, "invalid setq")
   else:
     var
