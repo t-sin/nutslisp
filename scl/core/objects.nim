@@ -30,7 +30,7 @@ type
     package*: LispPackage
     plist*: LispList
 
-  LispNull* = ref object of LispT
+  LispNull* = ref object of LispList
 
   LispSpecialCharacter* = enum
     lcharNewline = -2
