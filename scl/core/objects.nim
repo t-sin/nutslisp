@@ -50,7 +50,7 @@ type
 
   LispFunction* = ref object of LispT
     lambdaList*: LispList
-    body*: proc (args: varargs[LispT]): LispT
+    body*: LispList
 
 
   LispPackage* = ref object of LispT

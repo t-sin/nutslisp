@@ -53,15 +53,46 @@ proc evalLambdaExp(env: LispEnvironment,
   return fn
 
 proc bindLambdaList(env: LispEnvironment,
-                    args: LispList): LispList =
+                    lambdaList: LispList,
+                    args: LispList,
+                    newEnv: LispEnvironment = nil): LispEnvironment =
   # this should return an (lexical) environment
-  if args.cdr of LispNull:
-    return LispList(car: eval(env, args.car),
-                    cdr: makeLispObject[LispNull]())
+  var new_env: LispEnvironment
+
+  if isNil(newEnv):
+    new_env = initEnvironment()
+    new_env.parent = env
   else:
-    var cdr = LispList(args.cdr)
-    return LispList(car: eval(env, args.car),
-                    cdr: bindLambdaList(env, cdr))
+    new_env = newEnv
+
+  if lambdaList.cdr of LispNull:
+    return new_env
+  else:
+    var
+      lambda_cdr = LispList(lambdaList.cdr)
+      args_cdr = LispList(args.cdr)
+
+    if not (lambda_cdr.car of LispSymbol):
+      raise newException(Exception, "invalid lambda list")
+    else:
+      newEnv.binding[lambda_cdr.car.id] = args_cdr.car
+      return bindLambdaList(env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
+
+proc funcall(env: LispEnvironment,
+             fn: LispFunction,
+             args: varargs[LispT]): LispT =
+  var
+    arglist: LispList = nil
+    cons: LispList = nil
+
+  for a in args:
+    if not isNil(arglist):
+      cons = argList
+    arglist = makeLispObject[LispList]()
+    cons.cdr = arglist
+    arglist.car = a
+
+  return eval(bindLambdaList(env, fn.lambdaList, arglist), fn.body)
 
 proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
@@ -119,8 +150,9 @@ proc eval(env: LispEnvironment,
       #   newEnv = bindLambdaList(env, args)
       var fn = makeLispObject[LispFunction]()
       fn.lambdaList = makeLispObject[LispNull]()
-      fn.body = hello_fn
-      return fn.body([])
+      fn.body = LispList(car: LispSymbol(name: "quote"),
+                         cdr: LispList(car: LispNull(), cdr: LispNull()))
+      return funcall(env, fn, [])
 
   else:
     return obj
