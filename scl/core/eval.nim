@@ -41,6 +41,17 @@ proc evalSetq(env: LispEnvironment,
     else:
       return evalSetq(env, LispList(rest.cdr))
 
+proc evalLambdaExp(env: LispEnvironment,
+                   args: LispList): LispFunction =
+  var
+    fn = makeLispObject[LispFunction]()
+  if args.car of LispNull:
+    fn.lambdaList = nil
+  else:
+    fn.lambdaList = LispList(args.car)
+  fn.body = nil
+  return fn
+
 proc bindLambdaList(env: LispEnvironment,
                     args: LispList): LispList =
   # this should return an (lexical) environment
