@@ -25,15 +25,16 @@ proc evalSetq(env: LispEnvironment,
     else:
       return evalSetq(env, LispList(rest.cdr))
 
-proc parseLambdaList(env: LispEnvironment,
-                     args: LispList): LispList =
+proc bindLambdaList(env: LispEnvironment,
+                    args: LispList): LispList =
+  # this should return an (lexical) environment
   if args.cdr of LispNull:
     return LispList(car: eval(env, args.car),
                     cdr: makeLispObject[LispNull]())
   else:
     var cdr = LispList(args.cdr)
     return LispList(car: eval(env, args.car),
-                    cdr: parseLambdaList(env, cdr))
+                    cdr: bindLambdaList(env, cdr))
 
 proc eval(env: LispEnvironment,
           obj: LispT): LispT =
@@ -92,8 +93,8 @@ proc eval(env: LispEnvironment,
         return eval(env, trueClause)
 
     else:
-      var lambdaList = parseLambdaList(env, args)
-      return lambdaList
+      # var newEnv = bindLambdaList(env, args)
+      return pred
 
   else:
     return obj
