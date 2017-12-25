@@ -9,6 +9,22 @@ import data_flow
 proc eval(env: LispEnvironment,
           obj: LispT): LispT
 
+proc evalIf(env: LispEnvironment,
+            args: LispList): LispT =
+  var
+    pred = eval(env, args.car)
+    rest = LispList(args.cdr)
+    trueClause = rest.car
+    falseCons = rest.cdr
+
+  if pred of LispNull:
+    if falseCons of LispNull:
+      return makeLispObject[LispNull]()
+    else:
+      return eval(env, LispList(falseCons).car)
+  else:
+    return eval(env, trueClause)
+
 proc evalSetq(env: LispEnvironment,
               pairs: LispList): LispT =
   if pairs.cdr of LispNull:
@@ -78,23 +94,15 @@ proc eval(env: LispEnvironment,
       return evalSetq(env, args)
 
     if op.name == "if":
-      var
-        pred = eval(env, args.car)
-        rest = LispList(args.cdr)
-        trueClause = rest.car
-        falseCons = rest.cdr
+      return evalIf(env, args)
 
-      if pred of LispNull:
-        if falseCons of LispNull:
-          return makeLispObject[LispNull]()
-        else:
-          return eval(env, LispList(falseCons).car)
-      else:
-        return eval(env, trueClause)
+    if op.name == "lambda":
+      return evalLambdaExp(env, args)
 
     else:
-      # var newEnv = bindLambdaList(env, args)
-      return pred
+      # var
+      #   newEnv = bindLambdaList(env, args)
+      return nil
 
   else:
     return obj
