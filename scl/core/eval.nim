@@ -1,11 +1,13 @@
 import tables
 
 import objects
+import runtime
 import print
 import data_flow
 
 
-proc eval(env: LispEnvironment,
+proc eval(rt: LispRuntime,
+          env: LispEnvironment,
           obj: LispT): LispT
 
 proc evalSetq(env: LispEnvironment,
@@ -24,17 +26,19 @@ proc evalSetq(env: LispEnvironment,
     else:
       return evalSetq(env, LispList(rest.cdr))
 
-proc parseLambdaList(env: LispEnvironment,
+proc parseLambdaList(rt: LispRuntime,
+                     env: LispEnvironment,
                      args: LispList): LispList =
   if args.cdr of LispNull:
-    return LispList(car: eval(env, args.car),
+    return LispList(car: eval(rt, env, args.car),
                     cdr: makeLispObject[LispNull]())
   else:
     var cdr = LispList(args.cdr)
-    return LispList(car: eval(env, args.car),
-                    cdr: parseLambdaList(env, cdr))
+    return LispList(car: eval(rt, env, args.car),
+                    cdr: parseLambdaList(rt, env, cdr))
 
-proc eval(env: LispEnvironment,
+proc eval(rt: LispRuntime,
+          env: LispEnvironment,
           obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
@@ -77,7 +81,7 @@ proc eval(env: LispEnvironment,
 
     if op.name == "if":
       var
-        pred = eval(env, args.car)
+        pred = eval(rt, env, args.car)
         rest = LispList(args.cdr)
         trueClause = rest.car
         falseCons = rest.cdr
@@ -86,12 +90,12 @@ proc eval(env: LispEnvironment,
         if falseCons of LispNull:
           return makeLispObject[LispNull]()
         else:
-          return eval(env, LispList(falseCons).car)
+          return eval(rt, env, LispList(falseCons).car)
       else:
-        return eval(env, trueClause)
+        return eval(rt, env, trueClause)
 
     else:
-      var lambdaList = parseLambdaList(env, args)
+      var lambdaList = parseLambdaList(rt, env, args)
       return lambdaList
 
   else:
@@ -100,11 +104,4 @@ proc eval(env: LispEnvironment,
 import print
 
 when isMainModule:
-  var o = eval(
-    nil,
-    LispList(car: LispSymbol(name: "if"),
-             cdr: LispList (car: LispSymbol(name: "HOGE", value: LispT()),
-                            cdr: LispList(car: LispList(car: LispSymbol(name: "quote", value: LispSymbol(name: "FUGA", value: LispNull()))),
-                                          cdr: LispNull()))))
-
-  echo write(o)
+  discard
