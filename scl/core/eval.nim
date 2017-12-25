@@ -6,8 +6,7 @@ import print
 import data_flow
 
 
-proc eval(rt: LispRuntime,
-          env: LispEnvironment,
+proc eval(env: LispEnvironment,
           obj: LispT): LispT
 
 proc evalSetq(env: LispEnvironment,
@@ -26,19 +25,17 @@ proc evalSetq(env: LispEnvironment,
     else:
       return evalSetq(env, LispList(rest.cdr))
 
-proc parseLambdaList(rt: LispRuntime,
-                     env: LispEnvironment,
+proc parseLambdaList(env: LispEnvironment,
                      args: LispList): LispList =
   if args.cdr of LispNull:
-    return LispList(car: eval(rt, env, args.car),
+    return LispList(car: eval(env, args.car),
                     cdr: makeLispObject[LispNull]())
   else:
     var cdr = LispList(args.cdr)
-    return LispList(car: eval(rt, env, args.car),
-                    cdr: parseLambdaList(rt, env, cdr))
+    return LispList(car: eval(env, args.car),
+                    cdr: parseLambdaList(env, cdr))
 
-proc eval(rt: LispRuntime,
-          env: LispEnvironment,
+proc eval(env: LispEnvironment,
           obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
@@ -81,7 +78,7 @@ proc eval(rt: LispRuntime,
 
     if op.name == "if":
       var
-        pred = eval(rt, env, args.car)
+        pred = eval(env, args.car)
         rest = LispList(args.cdr)
         trueClause = rest.car
         falseCons = rest.cdr
@@ -90,12 +87,12 @@ proc eval(rt: LispRuntime,
         if falseCons of LispNull:
           return makeLispObject[LispNull]()
         else:
-          return eval(rt, env, LispList(falseCons).car)
+          return eval(env, LispList(falseCons).car)
       else:
-        return eval(rt, env, trueClause)
+        return eval(env, trueClause)
 
     else:
-      var lambdaList = parseLambdaList(rt, env, args)
+      var lambdaList = parseLambdaList(env, args)
       return lambdaList
 
   else:
