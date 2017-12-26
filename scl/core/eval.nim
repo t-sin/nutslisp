@@ -56,16 +56,20 @@ proc bindLambdaList(env: LispEnvironment,
                     lambdaList: LispList,
                     args: LispList,
                     newEnv: LispEnvironment = nil): LispEnvironment =
-  # this should return an (lexical) environment
   var new_env: LispEnvironment
 
+  # TODO: checks length of both lambdaList and args
   if isNil(newEnv):
     new_env = initEnvironment()
     new_env.parent = env
+    echo "lambdalist = " & write(lambdaList)
+    echo "args = " & write(args)
   else:
     new_env = newEnv
 
-  if lambdaList.cdr of LispNull:
+  if lambdaList of LispNull:
+    return new_env
+  elif lambdaList.cdr of LispNull:
     return new_env
   else:
     var
@@ -80,19 +84,10 @@ proc bindLambdaList(env: LispEnvironment,
 
 proc funcall(env: LispEnvironment,
              fn: LispFunction,
-             args: varargs[LispT]): LispT =
-  var
-    arglist: LispList = nil
-    cons: LispList = nil
-
-  for a in args:
-    if not isNil(arglist):
-      cons = argList
-    arglist = makeLispObject[LispList]()
-    cons.cdr = arglist
-    arglist.car = a
-
-  return eval(bindLambdaList(env, fn.lambdaList, arglist), fn.body)
+             args: LispList): LispT =
+  var newEnv = bindLambdaList(env, fn.lambdaList, args)
+  echo repr(newEnv)
+  return eval(newEnv, fn.body)
 
 proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
@@ -146,13 +141,9 @@ proc eval(env: LispEnvironment,
       return evalLambdaExp(env, args)
 
     else:
-      # var
-      #   newEnv = bindLambdaList(env, args)
-      var fn = makeLispObject[LispFunction]()
-      fn.lambdaList = makeLispObject[LispNull]()
-      fn.body = LispList(car: LispSymbol(name: "quote"),
-                         cdr: LispList(car: LispNull(), cdr: LispNull()))
-      return funcall(env, fn, [])
+      # var newEnv = bindLambdaList(env, args)
+      var fn = op.function
+      return funcall(env, fn, args)
 
   else:
     return obj
