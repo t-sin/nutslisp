@@ -33,7 +33,7 @@ proc readChar(inputStream: LispInputStream,
 proc readCharNoHang(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
-              recursiveP: bool): LispCharacter =
+              recursiveP: bool): LispT =
   discard
 
 proc unreadChar(ch: LispCharacter,
@@ -43,5 +43,5 @@ proc unreadChar(ch: LispCharacter,
 proc readLine(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
-              recursiveP: bool): LispCharacter =
+              recursiveP: bool): LispT =
   discard
