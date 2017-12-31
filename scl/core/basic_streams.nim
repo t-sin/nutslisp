@@ -13,14 +13,22 @@ proc peekChar(peekType: LispT,
               inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
-              recursiveP: bool): LispCharacter =
-  discard
+              recursiveP: bool): LispT =
+  if streams.atEnd(nil):
+    if eofErrorP:
+      raise newException(Exception, "end-of-stream")
+    else:
+      return eofErrorValue
 
 proc readChar(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
-              recursiveP: bool): LispCharacter =
-  discard
+              recursiveP: bool): LispT =
+  if streams.atEnd(nil):
+    if eofErrorP:
+      raise newException(Exception, "end-of-stream")
+    else:
+      return eofErrorValue
 
 proc readCharNoHang(inputStream: LispInputStream,
               eofErrorP: bool,
