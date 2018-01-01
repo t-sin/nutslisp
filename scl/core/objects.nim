@@ -42,10 +42,10 @@ type
   LispNumber* = ref object of LispT
 
 
-  LispArray* = ref object of LispT
-    elementType: LispT
-  LispVector* = ref object of LispArray
-  LispString* = ref object of LispVector
+  LispArray*[LispT] = ref object of LispT
+    content: seq[LispT]
+  LispVector*[LispT] = LispArray[LispT]
+  LispString* = LispVector[LispCharacter]
 
 
   LispFunction* = ref object of LispT
