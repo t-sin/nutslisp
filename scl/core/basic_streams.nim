@@ -36,13 +36,17 @@ proc streamPeekChar(peekType: LispT,
               eofErrorP: bool,
               eofErrorValue: LispT,
               recursiveP: bool): LispT =
-  if streams.atEnd(nil):
+  if streams.atEnd(inputStream.stream):
     if eofErrorP:
       raise newException(Exception, "end-of-stream")
     else:
       return eofErrorValue
+  else:
+    var ch = makeLispObject[LispCharacter]()
+    ch.codepoint = ord(peekChar(inputStream.stream))
+    return ch
 
-proc readChar(inputStream: LispInputStream,
+proc streamReadChar(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
               recursiveP: bool): LispT =
