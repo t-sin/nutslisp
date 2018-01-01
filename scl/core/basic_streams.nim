@@ -4,10 +4,32 @@ import objects
 
 
 type
+  StreamDirectionType* = enum
+    sdtInput, sdtOutput, stdInputOutput
+  StreamElementType* = enum
+    setCharacter, setBinary
+
   LispStream* = ref object of LispT
+    direction*: StreamDirectionType
+    elementType*: StreamElementType
+    stream: Stream
+
   LispInputStream* = ref object of LispStream
+    unreadable: bool
   LispOutputStream* = ref object of LispStream
 
+
+proc newLispInputStream(str: string = ""): LispInputStream =
+  var stream = makeLispObject[LispInputStream]()
+  stream.direction = StreamDirectionType.sdtInput
+  stream.elementType = StreamElementType.setCharacter
+  stream.stream = newStringStream(str)
+  if str.len > 0:
+    stream.unreadable = true
+  else:
+    stream.unreadable = false
+
+  return stream
 
 proc peekChar(peekType: LispT,
               inputStream: LispInputStream,
