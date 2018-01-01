@@ -31,7 +31,7 @@ proc newLispInputStream(str: string = ""): LispInputStream =
 
   return stream
 
-proc peekChar(peekType: LispT,
+proc streamPeekChar(peekType: LispT,
               inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
@@ -52,18 +52,24 @@ proc readChar(inputStream: LispInputStream,
     else:
       return eofErrorValue
 
-proc readCharNoHang(inputStream: LispInputStream,
+proc streamReadCharNoHang(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
               recursiveP: bool): LispT =
   discard
 
-proc unreadChar(ch: LispCharacter,
+proc streamUnreadChar(ch: LispCharacter,
                 inputStream: LispInputStream): LispNull =
   discard
 
-proc readLine(inputStream: LispInputStream,
+proc streamReadLine(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
               recursiveP: bool): LispT =
   discard
+
+when isMainModule:
+  var
+    stream = newLispInputStream("漢")
+    ch = streamPeekChar(LispNull(), stream, false, LispT(), false)
+  echo LispCharacter(ch).codepoint
