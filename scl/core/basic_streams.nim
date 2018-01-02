@@ -31,6 +31,22 @@ proc newLispInputStream(str: string = ""): LispInputStream =
 
   return stream
 
+# decoding UTF-8 bytes into codepoint
+# https://github.com/t-sin/oji/blob/master/encoding/unicode/utf-8.lisp
+proc isCharseqStart(ch: char): bool =
+  return 0b11000000 (0b11000000 & ch)
+
+proc charseqLength(ch: char): int =
+  var
+    bit = 0b11110000 & ch
+    count = 0
+    b = 0b10000000
+  while ()
+    var b =
+
+proc decodeUtf8Char(inputStream: LispInputStream): LispCharacter =
+  discard
+
 proc streamPeekChar(peekType: LispT,
               inputStream: LispInputStream,
               eofErrorP: bool,
