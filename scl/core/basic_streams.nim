@@ -46,6 +46,19 @@ proc charseqLength(ch: char): int =
     target = target shl 1
   return count
 
+proc decodeCodepoint(chars: array[char]): int64 =
+  case chars.len
+  of 1:
+    nil
+  of 2:
+    discard
+  of 3:
+    discard
+  of 4:
+    discard
+  else:
+    raise newException(Exception, "malformed utf-8 chars")
+
 proc decodeUtf8Char(inputStream: LispInputStream): LispCharacter =
   discard
 
