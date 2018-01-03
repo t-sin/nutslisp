@@ -3,6 +3,8 @@ import objects
 ## decoding UTF-8 bytes (string of Nim) into Unicode codepoint
 ## cf. https://github.com/t-sin/oji/blob/master/encoding/unicode/utf-8.lisp
 
+proc isAscii(ch: char): bool =
+  return ord(ch) < 0x80
 
 proc isCharseqStart(ch: char): bool =
   return 0b11000000 == (0b11000000 and ord(ch))
@@ -14,7 +16,7 @@ proc charseqLength(ch: char): int =
     bitmask = 0b10000000
   while bitmask >= 0b00010000 and ((target and bitmask) != 0):
     count += 1
-    target = target shr 1
+    target = target shl 1
   return count
 
 proc decodeCharseq(chars: string): LispCodepoint =
@@ -35,3 +37,26 @@ proc decodeCharseq(chars: string): LispCodepoint =
             0b00111111 and ord(chars[3]))
   else:
     raise newException(Exception, "malformed utf-8 chars")
+
+iterator decodeBytes(bytes: string): LispCodepoint =
+  var idx = 0
+  while idx < bytes.len:
+    var ch = bytes[idx]
+    if isAscii(ch):
+      yield ord(ch)
+      idx += 1
+    elif isCharseqStart(ch):
+      var
+        seqlen = charseqLength(ch)
+        codepoint = decodeCharseq(bytes[idx..<idx+seqlen])
+      yield codepoint
+      idx += seqlen
+    else:
+      raise newException(Exception, "invalid utf-8 byte")
+
+
+when isMainModule:
+  var s = "あぁいぃうぅぅ"
+  echo s.len
+  for ch in decodeBytes(s):
+    echo ch
