@@ -45,12 +45,12 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
     for i in 0..<str.len:
       stream.buffer[i] = str[i]
     stream.currentPos = 0
-    stream.bufferPos = int32(str.len)
-    stream.unreadable = true
+    stream.bufferPos = StreamBufferIndex(str.len - 1)
+
   return stream
 
 proc internal_isEOF[T](stream: LispInputStream[T]): bool =
-  if stream.currentPos == stream.bufferPos or stream.currentPos == stream.buffer.len:
+  if stream.currentPos == stream.bufferPos:
     return true
   else:
     return false
