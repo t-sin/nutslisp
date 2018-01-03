@@ -56,7 +56,7 @@ proc internal_isEOF[T](stream: LispInputStream[T]): bool =
   else:
     return false
 
-proc internal_readChar[T](stream: LispInputStream[T],
+proc internal_readElem[T](stream: LispInputStream[T],
                           peek: bool): (T, StreamEOF) =
   if internal_isEOF(stream):
     return (0'i64, true)
@@ -67,7 +67,7 @@ proc internal_readChar[T](stream: LispInputStream[T],
       stream.unreadable = true
     return (elm, false)
 
-proc internal_writeChar[T](stream: LispInputStream[T],
+proc internal_writeElem[T](stream: LispInputStream[T],
                            elm: T): bool =
   if (stream.currentPos + 1) mod StreamBufferSize == stream.bufferPos:
     return false
@@ -82,7 +82,7 @@ proc prevPos(pos: StreamBufferIndex): StreamBufferIndex =
   else:
     return pos - 1
 
-proc internal_unreadChar[T](stream: LispInputStream[T],
+proc internal_unreadElem[T](stream: LispInputStream[T],
                             elm: T): bool =
   if stream.unreadable:
     var prevPos = prevPos(stream.currentPos)
@@ -140,26 +140,26 @@ when isMainModule:
     ch: LispCodepoint
     eof: StreamEOF
 
-  (ch, eof) = internal_readChar(s, true)
+  (ch, eof) = internal_readElem(s, true)
   echo encodeCodepoint(ch) # a
-  echo internal_unreadChar(s, decodeByte("あ"))
+  echo internal_unreadElem(s, decodeByte("あ"))
 
-  (ch, eof) = internal_readChar(s, false)
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # a
 
-  (ch, eof) = internal_readChar(s, false)
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # i
-  echo internal_unreadChar(s, decodeByte("い")) # true
+  echo internal_unreadElem(s, decodeByte("い")) # true
 
-  (ch, eof) = internal_readChar(s, false)
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # i
 
-  (ch, eof) = internal_readChar(s, false)
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # u
 
-  (ch, eof) = internal_readChar(s, false)
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # e
 
-  echo internal_unreadChar(s, decodeByte("う")) # false
-  (ch, eof) = internal_readChar(s, false)
+  echo internal_unreadElem(s, decodeByte("う")) # false
+  (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # o
