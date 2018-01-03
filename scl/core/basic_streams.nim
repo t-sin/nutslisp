@@ -91,50 +91,12 @@ proc internal_unreadElem[T](stream: LispInputStream[T],
       stream.currentPos = prevPos
       return true
 
-proc streamPeekChar(peekType: LispT,
-              inputStream: LispInputStream,
-              eofErrorP: bool,
-              eofErrorValue: LispT,
-              recursiveP: bool): LispT =
-  if streams.atEnd(inputStream.stream):
-    if eofErrorP:
-      raise newException(Exception, "end-of-stream")
-    else:
-      return eofErrorValue
-  else:
-    var ch = makeLispObject[LispCharacter]()
-    ch.codepoint = ord(peekChar(inputStream.stream))
-    return ch
+  return false
 
 proc internal_clearInput[T](stream: LispInputStream[T]) =
   stream.unreadable = false
   stream.bufferPos = (stream.currentPos + 1) mod StreamBufferSize
 
-proc streamReadChar(inputStream: LispInputStream,
-              eofErrorP: bool,
-              eofErrorValue: LispT,
-              recursiveP: bool): LispT =
-  if streams.atEnd(nil):
-    if eofErrorP:
-      raise newException(Exception, "end-of-stream")
-    else:
-      return eofErrorValue
-
-proc streamReadCharNoHang(inputStream: LispInputStream,
-              eofErrorP: bool,
-              eofErrorValue: LispT,
-              recursiveP: bool): LispT =
-  discard
-
-proc streamUnreadChar(ch: LispCharacter,
-                inputStream: LispInputStream): LispNull =
-  discard
-
-proc streamReadLine(inputStream: LispInputStream,
-              eofErrorP: bool,
-              eofErrorValue: LispT,
-              recursiveP: bool): LispT =
-  discard
 
 when isMainModule:
   var s = makeLispCharacterInputStream(sequtils.toSeq(decodeBytes("あいうえおか")))
