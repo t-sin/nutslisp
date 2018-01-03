@@ -1,6 +1,7 @@
-import streams
+import sequtils
 
 import objects
+import utf8
 
 
 const
@@ -75,8 +76,21 @@ proc internal_writeChar[T](stream: LispInputStream[T],
     stream.buffer[stream.currentPos] = elm
     return true
 
+proc prevPos(pos: StreamBufferIndex): StreamBufferIndex =
+  if pos == 0:
+    return StreamBufferSize
+  else:
+    return pos - 1
 
-    raise newException(Exception, "malformed utf-8 chars")
+proc internal_unreadChar[T](stream: LispInputStream[T],
+                            elm: T): bool =
+  if stream.unreadable:
+    var prevPos = prevPos(stream.currentPos)
+    if prevPos != stream.bufferPos and stream.buffer[prevPos] == elm:
+      echo "prevch: " & $(encodeCodepoint(elm))
+      stream.unreadable = false
+      stream.currentPos = prevPos
+      return true
 
 proc streamPeekChar(peekType: LispT,
               inputStream: LispInputStream,
@@ -120,7 +134,32 @@ proc streamReadLine(inputStream: LispInputStream,
   discard
 
 when isMainModule:
+  var s = makeLispCharacterInputStream(sequtils.toSeq(decodeBytes("あいうえおか")))
+
   var
-    stream = newLispInputStream("漢")
-    ch = streamPeekChar(LispNull(), stream, false, LispT(), false)
-  echo LispCharacter(ch).codepoint
+    ch: LispCodepoint
+    eof: StreamEOF
+
+  (ch, eof) = internal_readChar(s, true)
+  echo encodeCodepoint(ch) # a
+  echo internal_unreadChar(s, decodeByte("あ"))
+
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # a
+
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # i
+  echo internal_unreadChar(s, decodeByte("い")) # true
+
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # i
+
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # u
+
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # e
+
+  echo internal_unreadChar(s, decodeByte("う")) # false
+  (ch, eof) = internal_readChar(s, false)
+  echo encodeCodepoint(ch) # o
