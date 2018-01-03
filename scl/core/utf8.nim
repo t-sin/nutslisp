@@ -57,24 +57,28 @@ iterator decodeBytes(bytes: string): LispCodepoint =
       raise newException(Exception, "invalid utf-8 byte")
 
 
-proc encodeByte(cp: LispCodepoint): string =
-  var ss = newStringStream()
-  if (cp and 0b111_000000_000000_000000) > 0:
-    write(ss, 0b111_000000_000000_000000 and cp)
-    write(ss, 0b000_111111_000000_000000 and cp)
-    write(ss, 0b000_000000_111111_000000 and cp)
-    write(ss, 0b000_000000_000000_111111 and cp)
-  elif (cp and 0b111_000000_000000_000000) > 0:
-    nil
-  elif (cp and 0b111_000000_000000_000000) > 0:
-    nil
+proc encodeCodepoint(cp: LispCodepoint): string =
+  result = newString(0)
+
+  if cp >= 0x10000:
+    result.add(char(`shr`(0b111_000000_000000_000000 and cp, 18) or 0b11110000))
+    result.add(char(`shr`(0b000_111111_000000_000000 and cp, 12) or 0b10000000))
+    result.add(char(`shr`(0b000_000000_111111_000000 and cp, 6) or 0b10000000))
+    result.add(char(0b000_000000_000000_111111 and cp or 0b10000000))
+
+  elif cp >= 0x0800:
+    result.add(char(`shr`(0b000_111111_000000_000000 and cp, 12) or 0b11100000))
+    result.add(char(`shr`(0b000_000000_111111_000000 and cp, 6) or 0b10000000))
+    result.add(char(0b000_000000_000000_111111 and cp or 0b10000000))
+
+  elif cp >= 0x0080:
+    result.add(char(`shr`(0b000_000000_111111_000000 and cp, 6) or 0b11000000))
+    result.add(char(0b000_000000_000000_111111 and cp or 0b10000000))
+
   else:
-    nil
-  return streams.readAll(ss)
+    result.add(char(cp))
 
 
-when isMainModule:
-  var s = "あぁいぃうぅぅ"
-  echo s.len
-  for ch in decodeBytes(s):
-    echo ch
+iterator encodeCodepoints(str: seq[LispCodepoint]): string =
+  for cp in str:
+    yield encodeCodepoint(cp)
