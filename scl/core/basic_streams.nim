@@ -48,10 +48,31 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
     stream.unreadable = true
   return stream
 
+proc internal_isEOF[T](stream: LispInputStream[T]): bool =
+  if stream.currentPos == stream.bufferPos or stream.currentPos == stream.buffer.len:
+    return true
   else:
-    stream.unreadable = false
+    return false
 
-  return stream
+proc internal_readChar[T](stream: LispInputStream[T],
+                          peek: bool): (T, StreamEOF) =
+  if internal_isEOF(stream):
+    return (0'i64, true)
+  else:
+    var elm = stream.buffer[stream.currentPos]
+    if not peek:
+      stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
+    return (elm, false)
+
+proc internal_writeChar[T](stream: LispInputStream[T],
+                           elm: T): bool =
+  if (stream.currentPos + 1) mod StreamBufferSize == stream.bufferPos:
+    return false
+  else:
+    stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
+    stream.buffer[stream.currentPos] = elm
+    return true
+
 
     raise newException(Exception, "malformed utf-8 chars")
 
