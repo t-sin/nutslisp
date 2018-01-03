@@ -8,16 +8,23 @@ type
     sdtInput, sdtOutput, stdInputOutput
   StreamElementType* = enum
     setCharacter, setBinary
+  StreamEOF* = bool
 
-  LispStream* = ref object of LispT
+  LispStream*[T] = ref object of LispT
     direction*: StreamDirectionType
     elementType*: StreamElementType
-    stream: Stream
+    buffer: seq[T]
+    currentPos: int32
+    bufferPos: int32
 
-  LispInputStream* = ref object of LispStream
+  LispInputStream*[T] = ref object of LispStream[T]
     unreadable: bool
-  LispOutputStream* = ref object of LispStream
+  LispCharacterInputStream* = ref object of LispInputStream[LispCodepoint]
+  LispBinaryInputStream* = ref object of LispInputStream[char]
 
+  LispOutputStream*[T] = ref object of LispStream[T]
+  LispCharacterOutputStream* = ref object of LispOutputStream[LispCodepoint]
+  LispBinaryOutputStream* = ref object of LispOutputStream[char]
 
 proc newLispInputStream(str: string = ""): LispInputStream =
   var stream = makeLispObject[LispInputStream]()
