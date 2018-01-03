@@ -40,7 +40,7 @@ proc decodeCharseq(chars: string): LispCodepoint =
   else:
     raise newException(Exception, "malformed utf-8 chars")
 
-iterator decodeBytes(bytes: string): LispCodepoint =
+iterator decodeBytes*(bytes: string): LispCodepoint =
   var idx = 0
   while idx < bytes.len:
     var ch = bytes[idx]
@@ -57,7 +57,7 @@ iterator decodeBytes(bytes: string): LispCodepoint =
       raise newException(Exception, "invalid utf-8 byte")
 
 
-proc encodeCodepoint(cp: LispCodepoint): string =
+proc encodeCodepoint*(cp: LispCodepoint): string =
   result = newString(0)
 
   if cp >= 0x10000:
@@ -79,6 +79,6 @@ proc encodeCodepoint(cp: LispCodepoint): string =
     result.add(char(cp))
 
 
-iterator encodeCodepoints(str: seq[LispCodepoint]): string =
+iterator encodeCodepoints*(str: seq[LispCodepoint]): string =
   for cp in str:
     yield encodeCodepoint(cp)
