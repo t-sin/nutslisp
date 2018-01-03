@@ -106,6 +106,10 @@ proc streamPeekChar(peekType: LispT,
     ch.codepoint = ord(peekChar(inputStream.stream))
     return ch
 
+proc internal_clearInput[T](stream: LispInputStream[T]) =
+  stream.unreadable = false
+  stream.bufferPos = (stream.currentPos + 1) mod StreamBufferSize
+
 proc streamReadChar(inputStream: LispInputStream,
               eofErrorP: bool,
               eofErrorValue: LispT,
@@ -153,6 +157,7 @@ when isMainModule:
   (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # i
 
+  internal_clearInput(s)
   (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # u
 
