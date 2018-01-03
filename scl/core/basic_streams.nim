@@ -12,13 +12,14 @@ type
   StreamElementType* = enum
     setCharacter, setBinary
   StreamEOF* = bool
+  StreamBufferIndex = int32
 
   LispStream*[T] = ref object of LispT
     direction*: StreamDirectionType
     elementType*: StreamElementType
     buffer: seq[T]
-    currentPos: int32
-    bufferPos: int32
+    currentPos: StreamBufferIndex
+    bufferPos: StreamBufferIndex
 
   LispInputStream*[T] = ref object of LispStream[T]
     unreadable: bool
