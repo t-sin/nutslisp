@@ -35,11 +35,11 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
+  stream.unreadable = false
   if isNil(str):
     stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
     stream.currentPos = 0
     stream.bufferPos = 0
-    stream.unreadable = false
   else:
     stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
     for i in 0..<str.len:
@@ -63,6 +63,7 @@ proc internal_readChar[T](stream: LispInputStream[T],
     var elm = stream.buffer[stream.currentPos]
     if not peek:
       stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
+      stream.unreadable = true
     return (elm, false)
 
 proc internal_writeChar[T](stream: LispInputStream[T],
