@@ -3,6 +3,9 @@ import streams
 import objects
 
 
+const
+  StreamBufferSize: int32 = 1024
+
 type
   StreamDirectionType* = enum
     sdtInput, sdtOutput, stdInputOutput
@@ -26,13 +29,25 @@ type
   LispCharacterOutputStream* = ref object of LispOutputStream[LispCodepoint]
   LispBinaryOutputStream* = ref object of LispOutputStream[char]
 
-proc newLispInputStream(str: string = ""): LispInputStream =
-  var stream = makeLispObject[LispInputStream]()
-  stream.direction = StreamDirectionType.sdtInput
+
+proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterInputStream =
+  var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
-  stream.stream = newStringStream(str)
-  if str.len > 0:
+  stream.direction = StreamDirectionType.sdtInput
+  if isNil(str):
+    stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
+    stream.currentPos = 0
+    stream.bufferPos = 0
+    stream.unreadable = false
+  else:
+    stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
+    for i in 0..<str.len:
+      stream.buffer[i] = str[i]
+    stream.currentPos = 0
+    stream.bufferPos = int32(str.len)
     stream.unreadable = true
+  return stream
+
   else:
     stream.unreadable = false
 
