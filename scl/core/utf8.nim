@@ -1,3 +1,5 @@
+import streams
+
 import objects
 
 ## decoding UTF-8 bytes (string of Nim) into Unicode codepoint
@@ -53,6 +55,22 @@ iterator decodeBytes(bytes: string): LispCodepoint =
       idx += seqlen
     else:
       raise newException(Exception, "invalid utf-8 byte")
+
+
+proc encodeByte(cp: LispCodepoint): string =
+  var ss = newStringStream()
+  if (cp and 0b111_000000_000000_000000) > 0:
+    write(ss, 0b111_000000_000000_000000 and cp)
+    write(ss, 0b000_111111_000000_000000 and cp)
+    write(ss, 0b000_000000_111111_000000 and cp)
+    write(ss, 0b000_000000_000000_111111 and cp)
+  elif (cp and 0b111_000000_000000_000000) > 0:
+    nil
+  elif (cp and 0b111_000000_000000_000000) > 0:
+    nil
+  else:
+    nil
+  return streams.readAll(ss)
 
 
 when isMainModule:
