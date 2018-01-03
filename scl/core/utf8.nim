@@ -1,6 +1,5 @@
-import streams
-
 import objects
+
 
 ## decoding UTF-8 bytes (string of Nim) into Unicode codepoint
 ## cf. https://github.com/t-sin/oji/blob/master/encoding/unicode/utf-8.lisp
