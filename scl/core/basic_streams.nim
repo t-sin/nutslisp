@@ -119,7 +119,7 @@ when isMainModule:
   (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # i
 
-  internal_clearInput(s)
+  internal_clearInput(s) # 以降、curPosとbufPosの関係が狂って、結果もバグってる
   (ch, eof) = internal_readElem(s, false)
   echo encodeCodepoint(ch) # u
 
