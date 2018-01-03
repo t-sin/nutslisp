@@ -87,7 +87,6 @@ proc internal_unreadElem[T](stream: LispInputStream[T],
   if stream.unreadable:
     var prevPos = prevPos(stream.currentPos)
     if prevPos != stream.bufferPos and stream.buffer[prevPos] == elm:
-      echo "prevch: " & $(encodeCodepoint(elm))
       stream.unreadable = false
       stream.currentPos = prevPos
       return true
