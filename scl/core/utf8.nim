@@ -55,6 +55,9 @@ iterator decodeBytes*(bytes: string): LispCodepoint =
     else:
       raise newException(Exception, "invalid utf-8 byte")
 
+proc decodeByte*(bytes: string): LispCodepoint =
+  for cp in decodeBytes(bytes):
+    return cp
 
 proc encodeCodepoint*(cp: LispCodepoint): string =
   result = newString(0)
