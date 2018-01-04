@@ -51,7 +51,7 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
   return stream
 
 proc internal_listen[T](stream: LispInputStream[T]): bool =
-  if stream.currentPos == stream.bufferPos:
+  if not stream.currentPos == stream.bufferPos:
     return true
   else:
     return false
