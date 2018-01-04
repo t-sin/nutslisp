@@ -58,8 +58,10 @@ proc internal_listen[T](stream: LispInputStream[T]): bool =
 
 proc internal_readElem[T](stream: LispInputStream[T],
                           peek: bool): (T, StreamEOF) =
-  if internal_listen(stream):
+  if isNil(stream.buffer):
     return (0'i64, true)
+  if stream.currentPos == stream.bufferPos:
+    return (0'i64, false)
   else:
     var elm = stream.buffer[stream.currentPos]
     if not peek:
@@ -69,7 +71,9 @@ proc internal_readElem[T](stream: LispInputStream[T],
 
 proc internal_writeElem[T](stream: LispInputStream[T],
                            elm: T): bool =
-  if (stream.currentPos + 1) mod StreamBufferSize == stream.bufferPos:
+  if isNil(stream.buffer):
+    return false
+  elif (stream.currentPos + 1) mod StreamBufferSize == stream.bufferPos:
     return false
   else:
     stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
@@ -84,7 +88,9 @@ proc prevPos(pos: StreamBufferIndex): StreamBufferIndex =
 
 proc internal_unreadElem[T](stream: LispInputStream[T],
                             elm: T): bool =
-  if stream.unreadable:
+  if isNil(stream.buffer):
+    return false
+  elif stream.unreadable:
     var prevPos = prevPos(stream.currentPos)
     if prevPos != stream.bufferPos and stream.buffer[prevPos] == elm:
       stream.unreadable = false
