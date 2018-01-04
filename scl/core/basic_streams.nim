@@ -101,12 +101,18 @@ proc internal_readElem[T](stream: LispInputStream[T],
                           peek: bool): (T, StreamEOF) =
   if isNil(stream.buffer):
     return (0'i64, true)
-  if stream.currentPos == stream.bufferPos:
+  if (stream.tailPos.aidx == stream.headPos.aidx and
+      stream.tailPos.bidx == stream.headPos.bidx):
     return (0'i64, false)
   else:
-    var elm = stream.buffer[stream.currentPos]
+    var
+      elm = stream.buffer[stream.tailPos.aidx][stream.tailPos.bidx]
     if not peek:
-      stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
+      if stream.tailPos.bidx + 1 >= stream.bufferSize:
+        stream.tailPos.aidx += 1
+        stream.tailPos.bidx = (stream.tailPos.bidx + 1) mod stream.bufferSize
+      else:
+        stream.tailPos.bidx += 1
       stream.unreadable = true
     return (elm, false)
 
