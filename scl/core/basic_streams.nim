@@ -50,6 +50,13 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
 
   return stream
 
+proc internal_close[T](stream: LispInputStream[T]): bool =
+  if isNil(stream.buffer):
+    return false
+  else:
+    stream.buffer = nil
+    return true
+
 proc internal_listen[T](stream: LispInputStream[T]): bool =
   if not stream.currentPos == stream.bufferPos:
     return true
