@@ -4,9 +4,6 @@ import objects
 import utf8
 
 
-const
-  DefaultStreamBufferSize: int32 = 1024
-
 type
   StreamEOF = bool
   StreamBufferIndex = int32
@@ -14,6 +11,9 @@ type
   StreamPos = object
     aidx: StreamBufferArrayIndex
     bidx: StreamBufferIndex
+
+const
+  DefaultStreamBufferSize: StreamBufferIndex = 1024
 
 type
   StreamDirectionType* = enum
@@ -39,45 +39,45 @@ type
   LispBinaryOutputStream* = ref object of LispOutputStream[char]
 
 
-proc toBuffer[T](src: seq[T], offset: StreamBufferIndex): seq[T] =
+proc toBuffer[T](src: seq[T],
+                 bufSize: StreamBufferIndex,
+                 offset: StreamBufferIndex): seq[T] =
   result = newSeq[T](DefaultStreamBufferSize)
 
   var
     length: StreamBufferIndex
-  if src.len > DefaultStreamBufferSize:
-    length = DefaultStreamBufferSize
+  if src.len > bufSize:
+    length = bufSize
   else:
     length = StreamBufferIndex(src.len)
 
   for i in 0..<length:
     result[i] = src[offset+i]
 
-proc initialBufferNum[T](a: seq[T]): StreamBufferArrayIndex =
-  return StreamBufferArrayIndex(a.len / DefaultStreamBufferSize) + 1
 
-proc initialLastBufferPos[T](a: seq[T]): StreamBufferIndex =
-  return a.len mod DefaultStreamBufferSize
-
-proc makeAndCopySeq[T](src: seq[T]): seq[seq[T]]  =
-  var bufNum = initialBufferNum(src)
+proc makeAndCopySeq[T](src: seq[T],
+                       bufSize: StreamBufferIndex): seq[seq[T]]  =
+  var bufNum = StreamBufferArrayIndex(src.len / bufSize) + 1
   result = newSeq[seq[T]](bufNum)
   for i in 0..<bufNum:
-    result[i] = toBuffer(src, i * DefaultStreamBufferSize)
+    result[i] = toBuffer(src, bufSize, i * bufSize)
 
-proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterInputStream =
+proc makeLispCharacterInputStream(bufSize: StreamBufferIndex,
+                                  str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
   stream.unreadable = false
+  stream.bufferSize = bufSize
 
   if isNil(str):
-    stream.buffer = makeAndCopySeq[LispCodepoint](@[])
+    stream.buffer = makeAndCopySeq[LispCodepoint](@[], bufSize)
     stream.headPos = StreamPos(aidx: 0, bidx: 0)
     stream.tailPos = StreamPos(aidx: 0, bidx: 0)
   else:
-    stream.buffer = makeAndCopySeq(str)
-    stream.headPos = StreamPos(aidx: initialBufferNum(str) - 1,
-                               bidx: initialLastBufferPos(str))
+    stream.buffer = makeAndCopySeq(str, bufSize)
+    stream.headPos = StreamPos(aidx: StreamBufferArrayIndex(str.len / bufSize),
+                               bidx: StreamBufferindex(str.len mod bufSize))
     stream.tailPos = StreamPos(aidx: 0, bidx: 0)
 
   return stream
