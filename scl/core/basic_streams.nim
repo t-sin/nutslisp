@@ -50,7 +50,7 @@ proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterI
 
   return stream
 
-proc internal_isEOF[T](stream: LispInputStream[T]): bool =
+proc internal_listen[T](stream: LispInputStream[T]): bool =
   if stream.currentPos == stream.bufferPos:
     return true
   else:
@@ -58,7 +58,7 @@ proc internal_isEOF[T](stream: LispInputStream[T]): bool =
 
 proc internal_readElem[T](stream: LispInputStream[T],
                           peek: bool): (T, StreamEOF) =
-  if internal_isEOF(stream):
+  if internal_listen(stream):
     return (0'i64, true)
   else:
     var elm = stream.buffer[stream.currentPos]
