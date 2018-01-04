@@ -5,13 +5,15 @@ import utf8
 
 
 const
-  StreamBufferSize: int32 = 1024
+  DefaultStreamBufferSize: int32 = 1024
 
 type
   StreamEOF = bool
   StreamBufferIndex = int32
   StreamBufferArrayIndex = int32
-
+  StreamPos = object
+    aidx: StreamBufferArrayIndex
+    bidx: StreamBufferIndex
 
 type
   StreamDirectionType* = enum
@@ -22,10 +24,10 @@ type
   LispStream*[T] = ref object of LispT
     direction*: StreamDirectionType
     elementType*: StreamElementType
+    bufferSize: StreamBufferIndex
     buffer: seq[seq[T]]
-    bufferIdx: StreamBufferArrayIndex
-    currentPos: StreamBufferIndex
-    bufferPos: StreamBufferIndex
+    headPos: StreamPos
+    tailPos: StreamPos
 
   LispInputStream*[T] = ref object of LispStream[T]
     unreadable: bool
@@ -37,37 +39,46 @@ type
   LispBinaryOutputStream* = ref object of LispOutputStream[char]
 
 
-proc copySeqToBuffer[T](src: seq[T]): (seq[T], StreamBufferIndex) =
-  result = newSeq(0)
+proc toBuffer[T](src: seq[T], offset: StreamBufferIndex): seq[T] =
+  result = newSeq[T](DefaultStreamBufferSize)
 
   var
     length: StreamBufferIndex
-  if src.len > StreamBufferSize:
-    length = StreamBufferIndex
+  if src.len > DefaultStreamBufferSize:
+    length = DefaultStreamBufferSize
   else:
-    length = src.len
+    length = StreamBufferIndex(src.len)
 
-  for i in 0..length:
-    result[i] = src[i]
+  for i in 0..<length:
+    result[i] = src[offset+i]
 
-proc makeAndCopySeq[T](src: seq[T]): seq[seq[T]] =
-  result = newSeq(0)
-  for idx in 0..(src.len / StreamBufferSize + 1):
-    result[idx] = copySeqToBuffer(src)
+proc initialBufferNum[T](a: seq[T]): StreamBufferArrayIndex =
+  return StreamBufferArrayIndex(a.len / DefaultStreamBufferSize) + 1
+
+proc initialLastBufferPos[T](a: seq[T]): StreamBufferIndex =
+  return a.len mod DefaultStreamBufferSize
+
+proc makeAndCopySeq[T](src: seq[T]): seq[seq[T]]  =
+  var bufNum = initialBufferNum(src)
+  result = newSeq[seq[T]](bufNum)
+  for i in 0..<bufNum:
+    result[i] = toBuffer(src, i * DefaultStreamBufferSize)
 
 proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
   stream.unreadable = false
+
   if isNil(str):
-    stream.buffer = makeAndCopySeq(str)
-    stream.currentPos = 0
-    stream.bufferPos = 0
+    stream.buffer = makeAndCopySeq[LispCodepoint](@[])
+    stream.headPos = StreamPos(aidx: 0, bidx: 0)
+    stream.tailPos = StreamPos(aidx: 0, bidx: 0)
   else:
     stream.buffer = makeAndCopySeq(str)
-    stream.currentPos = 0
-    stream.bufferPos = StreamBufferIndex(str.len - 1)
+    stream.headPos = StreamPos(aidx: initialBufferNum(str) - 1,
+                               bidx: initialLastBufferPos(str))
+    stream.tailPos = StreamPos(aidx: 0, bidx: 0)
 
   return stream
 
@@ -79,8 +90,10 @@ proc internal_close[T](stream: LispInputStream[T]): bool =
     return true
 
 proc internal_listen[T](stream: LispInputStream[T]): bool =
-  if not stream.currentPos == stream.bufferPos:
+  if stream.tailPos.aidx < stream.headPos.aidx:
     return true
+  elif stream.tailPos.aidx == stream.headPos.aidx:
+    return stream.tailPos.bidx < stream.headPos.bidx
   else:
     return false
 
