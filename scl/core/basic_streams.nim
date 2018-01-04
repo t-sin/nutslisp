@@ -8,17 +8,22 @@ const
   StreamBufferSize: int32 = 1024
 
 type
+  StreamEOF = bool
+  StreamBufferIndex = int32
+  StreamBufferArrayIndex = int32
+
+
+type
   StreamDirectionType* = enum
     sdtInput, sdtOutput, stdInputOutput
   StreamElementType* = enum
     setCharacter, setBinary
-  StreamEOF* = bool
-  StreamBufferIndex = int32
 
   LispStream*[T] = ref object of LispT
     direction*: StreamDirectionType
     elementType*: StreamElementType
-    buffer: seq[T]
+    buffer: seq[seq[T]]
+    bufferIdx: StreamBufferArrayIndex
     currentPos: StreamBufferIndex
     bufferPos: StreamBufferIndex
 
@@ -32,19 +37,35 @@ type
   LispBinaryOutputStream* = ref object of LispOutputStream[char]
 
 
+proc copySeqToBuffer[T](src: seq[T]): (seq[T], StreamBufferIndex) =
+  result = newSeq(0)
+
+  var
+    length: StreamBufferIndex
+  if src.len > StreamBufferSize:
+    length = StreamBufferIndex
+  else:
+    length = src.len
+
+  for i in 0..length:
+    result[i] = src[i]
+
+proc makeAndCopySeq[T](src: seq[T]): seq[seq[T]] =
+  result = newSeq(0)
+  for idx in 0..(src.len / StreamBufferSize + 1):
+    result[idx] = copySeqToBuffer(src)
+
 proc makeLispCharacterInputStream(str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
   stream.unreadable = false
   if isNil(str):
-    stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
+    stream.buffer = makeAndCopySeq(str)
     stream.currentPos = 0
     stream.bufferPos = 0
   else:
-    stream.buffer = newSeqWith(StreamBufferSize, LispCodepoint(0))
-    for i in 0..<str.len:
-      stream.buffer[i] = str[i]
+    stream.buffer = makeAndCopySeq(str)
     stream.currentPos = 0
     stream.bufferPos = StreamBufferIndex(str.len - 1)
 
