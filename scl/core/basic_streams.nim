@@ -95,11 +95,22 @@ proc internal_unreadElem[T](stream: LispInputStream[T],
 
 proc internal_clearInput[T](stream: LispInputStream[T]) =
   stream.unreadable = false
-  stream.bufferPos = (stream.currentPos + 1) mod StreamBufferSize
+  stream.bufferPos = stream.currentPos mod StreamBufferSize
 
 
 when isMainModule:
   var s = makeLispCharacterInputStream(sequtils.toSeq(decodeBytes("あいうえおか")))
+
+  proc readPrint[T](stream: LispInputStream[T]): LispCodepoint =
+    var
+      ch: LispCodepoint
+      eof: StreamEOF
+    (ch, eof) = internal_readElem(s, false)
+    if eof:
+      echo "(ch, eof): (_, true)"
+    else:
+      echo "(ch, eof): (" & $(encodeCodepoint(ch)) & ", " & $(eof) & ")"
+    return ch
 
   var
     ch: LispCodepoint
@@ -109,23 +120,17 @@ when isMainModule:
   echo encodeCodepoint(ch) # a
   echo internal_unreadElem(s, decodeByte("あ"))
 
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # a
+  ch = readPrint(s) # a
 
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # i
+  ch = readPrint(s) # i
   echo internal_unreadElem(s, decodeByte("い")) # true
 
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # i
+  ch = readPrint(s) # i
 
-  internal_clearInput(s) # 以降、curPosとbufPosの関係が狂って、結果もバグってる
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # u
+  internal_clearInput(s)
+  ch = readPrint(s) # u
 
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # e
+  ch = readPrint(s) # e
 
   echo internal_unreadElem(s, decodeByte("う")) # false
-  (ch, eof) = internal_readElem(s, false)
-  echo encodeCodepoint(ch) # o
+  ch = readPrint(s) # o
