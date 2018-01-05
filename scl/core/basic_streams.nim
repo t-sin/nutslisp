@@ -162,18 +162,24 @@ proc internal_unreadElem[T](stream: LispInputStream[T],
                             elm: T): bool =
   if isNil(stream.buffer):
     return false
+
   elif stream.unreadable:
-    var prevPos = prevPos(stream.currentPos)
-    if prevPos != stream.bufferPos and stream.buffer[prevPos] == elm:
+    var prevPos = prevPos(stream.tail, stream.bufferSize)
+
+    if prevPos.aidx < 0 or prevPos.bidx < 0:
+      return false
+    elif (prevPos.aidx != stream.head.aidx and
+          prevPos.bidx != stream.head.bidx and
+          stream.buffer[prevPos.aidx][prevPos.bidx] == elm):
       stream.unreadable = false
-      stream.currentPos = prevPos
+      stream.tail = prevPos
       return true
 
   return false
 
 proc internal_clearInput[T](stream: LispInputStream[T]) =
   stream.unreadable = false
-  stream.bufferPos = stream.currentPos mod StreamBufferSize
+  stream.tail = stream.head
 
 
 when isMainModule:
