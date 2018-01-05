@@ -122,11 +122,31 @@ proc internal_writeElem[T](stream: LispInputStream[T],
                            elm: T): bool =
   if isNil(stream.buffer):
     return false
-  elif (stream.currentPos + 1) mod StreamBufferSize == stream.bufferPos:
-    return false
+
+  elif stream.tailPos.aidx == stream.headPos.aidx:
+    return stream.tailPos.bidx + 1 < stream.headPos.bidx
+
+  elif stream.tailPos.aidx < stream.headPos.aidx:
+    if stream.headPos.bidx == 0:
+      return stream.tailPos.bidx < stream.bufferSize - 2
+    else:
+      return true
+
+  elif stream.tailPos.aidx > stream.headPos.aidx:
+    raise newException(Exception, "oops! stream is broken...")
+
   else:
-    stream.currentPos = (stream.currentPos + 1) mod StreamBufferSize
-    stream.buffer[stream.currentPos] = elm
+    stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elm
+
+    if stream.headPos.bidx == stream.buffer.len - 1:
+      stream.buffer.add(newSeq[T](stream.bufferSize))
+      stream.headPos.aidx += 1
+      stream.headPos.bidx = 0
+
+    else:
+      stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elm
+      stream.headPos.bidx += 1
+
     return true
 
 proc prevPos(pos: StreamBufferIndex): StreamBufferIndex =
