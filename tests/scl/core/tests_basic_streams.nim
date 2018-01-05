@@ -16,6 +16,7 @@ suite "stream construction":
     check:
       s.direction == StreamDirectionType.sdtInput
       s.elementType == StreamElementType.setCharacter
+      internal_listen(s) == false
 
   test "zero-length buffer":
     expect Exception:
@@ -33,7 +34,7 @@ suite "stream construction":
     check:
       ch('a', false) == internal_readElem(s, false)
       ch('b', false) == internal_readElem(s, false)
-      ch('c', false) == internal_readElem(s, false)
+      ch('c', true) == internal_readElem(s, false)
       internal_listen(s) == false
 
   test "initial contents which has length of the buffer":
@@ -57,5 +58,6 @@ suite "stream construction":
       ch('a', false) == internal_readElem(s, false)
       ch('b', false) == internal_readElem(s, false)
       ch('c', false) == internal_readElem(s, false)
-      ch('d', true) == internal_readElem(s, false)
+      ch('d', false) == internal_readElem(s, false)
+      ch('e', true) == internal_readElem(s, false)
       internal_listen(s) == false
