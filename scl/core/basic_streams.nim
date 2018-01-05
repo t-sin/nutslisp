@@ -149,11 +149,14 @@ proc internal_writeElem[T](stream: LispInputStream[T],
 
     return true
 
-proc prevPos(pos: StreamBufferIndex): StreamBufferIndex =
-  if pos == 0:
-    return StreamBufferSize
+proc prevPos(pos: StreamPos,
+             bufSize: StreamBufferIndex): StreamPos =
+  if pos.bidx == 0:
+    return StreamPos(aidx: pos.aidx - 1,
+                     bidx: bufSize - 1)
   else:
-    return pos - 1
+    return StreamPos(aidx: pos.aidx,
+                     bidx: pos.bidx - 1)
 
 proc internal_unreadElem[T](stream: LispInputStream[T],
                             elm: T): bool =
