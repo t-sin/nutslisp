@@ -62,8 +62,8 @@ proc makeAndCopySeq[T](src: seq[T],
   for i in 0..<bufNum:
     result[i] = toBuffer(src, bufSize, i * bufSize)
 
-proc makeLispCharacterInputStream(bufSize: StreamBufferIndex,
-                                  str: seq[LispCodepoint] = nil): LispCharacterInputStream =
+proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
+                                   str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
@@ -82,7 +82,7 @@ proc makeLispCharacterInputStream(bufSize: StreamBufferIndex,
 
   return stream
 
-proc internal_close[T](stream: LispInputStream[T]): bool =
+proc internal_close*[T](stream: LispInputStream[T]): bool =
   if isNil(stream.buffer):
     return false
   else:
@@ -91,7 +91,7 @@ proc internal_close[T](stream: LispInputStream[T]): bool =
     stream.tail = nil
     return true
 
-proc internal_listen[T](stream: LispInputStream[T]): bool =
+proc internal_listen*[T](stream: LispInputStream[T]): bool =
   if stream.tail.aidx < stream.head.aidx:
     return true
   elif stream.tail.aidx == stream.head.aidx:
@@ -99,8 +99,8 @@ proc internal_listen[T](stream: LispInputStream[T]): bool =
   else:
     return false
 
-proc internal_readElem[T](stream: LispInputStream[T],
-                          peek: bool): (T, StreamEOF) =
+proc internal_readElem*[T](stream: LispInputStream[T],
+                           peek: bool): (T, StreamEOF) =
   if isNil(stream.buffer):
     return (0'i64, true)
   if (stream.tail.aidx == stream.head.aidx and
@@ -118,8 +118,8 @@ proc internal_readElem[T](stream: LispInputStream[T],
       stream.unreadable = true
     return (elem, false)
 
-proc internal_writeElem[T](stream: LispInputStream[T],
-                           elem: T): bool =
+proc internal_writeElem*[T](stream: LispInputStream[T],
+                            elem: T): bool =
   if isNil(stream.buffer):
     return false
 
@@ -158,8 +158,8 @@ proc prevPos(pos: StreamPos,
     return StreamPos(aidx: pos.aidx,
                      bidx: pos.bidx - 1)
 
-proc internal_unreadElem[T](stream: LispInputStream[T],
-                            elm: T): bool =
+proc internal_unreadElem*[T](stream: LispInputStream[T],
+                             elm: T): bool =
   if isNil(stream.buffer):
     return false
 
@@ -177,7 +177,7 @@ proc internal_unreadElem[T](stream: LispInputStream[T],
 
   return false
 
-proc internal_clearInput[T](stream: LispInputStream[T]) =
+proc internal_clearInput*[T](stream: LispInputStream[T]) =
   stream.unreadable = false
   stream.tail = stream.head
 
