@@ -1,4 +1,4 @@
 import unittest
 
 # SCL core module tests
-import scl.core.basic_streams
+import scl.core.tests_basic_streams
