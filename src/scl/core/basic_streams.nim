@@ -219,3 +219,7 @@ when isMainModule:
 
   echo internal_unreadElem(s, decodeByte("う")) # false
   ch = readPrint(s) # o
+
+  echo internal_writeElem(s, decodeByte("ゴ"))
+  ch = readPrint(s) # go
+  
