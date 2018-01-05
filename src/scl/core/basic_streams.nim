@@ -62,6 +62,16 @@ proc makeAndCopySeq[T](src: seq[T],
   for i in 0..<bufNum:
     result[i] = toBuffer(src, bufSize, i * bufSize)
 
+template assertPos(stream: untyped): untyped =
+  assert(stream.head.aidx >= 0)
+  assert(stream.head.aidx < stream.buffer.len)
+  assert(stream.tail.aidx >= 0)
+  assert(stream.tail.aidx < stream.buffer.len)
+  assert(stream.head.bidx >= 0)
+  assert(stream.head.bidx < stream.bufferSize)
+  assert(stream.tail.bidx >= 0)
+  assert(stream.tail.bidx < stream.bufferSize)
+
 proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
                                    str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   assert(bufSize > 0)
@@ -105,6 +115,8 @@ proc internal_readElem*[T](stream: LispInputStream[T],
                            peek: bool): (T, StreamEOF) =
   if isNil(stream.buffer):
     return (0'i64, true)
+
+  assertPos(stream)
   if (stream.tail.aidx == stream.head.aidx and
       stream.tail.bidx == stream.head.bidx):
     return (0'i64, false)
