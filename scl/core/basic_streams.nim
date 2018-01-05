@@ -108,7 +108,7 @@ proc internal_readElem[T](stream: LispInputStream[T],
     return (0'i64, false)
   else:
     var
-      elm = stream.buffer[stream.tailPos.aidx][stream.tailPos.bidx]
+      elem = stream.buffer[stream.tailPos.aidx][stream.tailPos.bidx]
     if not peek:
       if stream.tailPos.bidx + 1 >= stream.bufferSize:
         stream.tailPos.aidx += 1
@@ -116,10 +116,10 @@ proc internal_readElem[T](stream: LispInputStream[T],
       else:
         stream.tailPos.bidx += 1
       stream.unreadable = true
-    return (elm, false)
+    return (elem, false)
 
 proc internal_writeElem[T](stream: LispInputStream[T],
-                           elm: T): bool =
+                           elem: T): bool =
   if isNil(stream.buffer):
     return false
 
@@ -136,7 +136,7 @@ proc internal_writeElem[T](stream: LispInputStream[T],
     raise newException(Exception, "oops! stream is broken...")
 
   else:
-    stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elm
+    stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elem
 
     if stream.headPos.bidx == stream.buffer.len - 1:
       stream.buffer.add(newSeq[T](stream.bufferSize))
@@ -144,7 +144,7 @@ proc internal_writeElem[T](stream: LispInputStream[T],
       stream.headPos.bidx = 0
 
     else:
-      stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elm
+      stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elem
       stream.headPos.bidx += 1
 
     return true
