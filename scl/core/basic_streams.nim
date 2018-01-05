@@ -87,6 +87,8 @@ proc internal_close[T](stream: LispInputStream[T]): bool =
     return false
   else:
     stream.buffer = nil
+    stream.headPos = nil
+    stream.tailPos = nil
     return true
 
 proc internal_listen[T](stream: LispInputStream[T]): bool =
