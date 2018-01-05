@@ -26,8 +26,8 @@ type
     elementType*: StreamElementType
     bufferSize: StreamBufferIndex
     buffer: seq[seq[T]]
-    headPos: StreamPos
-    tailPos: StreamPos
+    head: StreamPos
+    tail: StreamPos
 
   LispInputStream*[T] = ref object of LispStream[T]
     unreadable: bool
@@ -72,13 +72,13 @@ proc makeLispCharacterInputStream(bufSize: StreamBufferIndex,
 
   if isNil(str):
     stream.buffer = makeAndCopySeq[LispCodepoint](@[], bufSize)
-    stream.headPos = StreamPos(aidx: 0, bidx: 0)
-    stream.tailPos = StreamPos(aidx: 0, bidx: 0)
+    stream.head = StreamPos(aidx: 0, bidx: 0)
+    stream.tail = StreamPos(aidx: 0, bidx: 0)
   else:
     stream.buffer = makeAndCopySeq(str, bufSize)
-    stream.headPos = StreamPos(aidx: StreamBufferArrayIndex(str.len / bufSize),
+    stream.head = StreamPos(aidx: StreamBufferArrayIndex(str.len / bufSize),
                                bidx: StreamBufferindex(str.len mod bufSize))
-    stream.tailPos = StreamPos(aidx: 0, bidx: 0)
+    stream.tail = StreamPos(aidx: 0, bidx: 0)
 
   return stream
 
@@ -87,15 +87,15 @@ proc internal_close[T](stream: LispInputStream[T]): bool =
     return false
   else:
     stream.buffer = nil
-    stream.headPos = nil
-    stream.tailPos = nil
+    stream.head = nil
+    stream.tail = nil
     return true
 
 proc internal_listen[T](stream: LispInputStream[T]): bool =
-  if stream.tailPos.aidx < stream.headPos.aidx:
+  if stream.tail.aidx < stream.head.aidx:
     return true
-  elif stream.tailPos.aidx == stream.headPos.aidx:
-    return stream.tailPos.bidx < stream.headPos.bidx
+  elif stream.tail.aidx == stream.head.aidx:
+    return stream.tail.bidx < stream.head.bidx
   else:
     return false
 
@@ -103,18 +103,18 @@ proc internal_readElem[T](stream: LispInputStream[T],
                           peek: bool): (T, StreamEOF) =
   if isNil(stream.buffer):
     return (0'i64, true)
-  if (stream.tailPos.aidx == stream.headPos.aidx and
-      stream.tailPos.bidx == stream.headPos.bidx):
+  if (stream.tail.aidx == stream.head.aidx and
+      stream.tail.bidx == stream.head.bidx):
     return (0'i64, false)
   else:
     var
-      elem = stream.buffer[stream.tailPos.aidx][stream.tailPos.bidx]
+      elem = stream.buffer[stream.tail.aidx][stream.tail.bidx]
     if not peek:
-      if stream.tailPos.bidx + 1 >= stream.bufferSize:
-        stream.tailPos.aidx += 1
-        stream.tailPos.bidx = (stream.tailPos.bidx + 1) mod stream.bufferSize
+      if stream.tail.bidx + 1 >= stream.bufferSize:
+        stream.tail.aidx += 1
+        stream.tail.bidx = (stream.tail.bidx + 1) mod stream.bufferSize
       else:
-        stream.tailPos.bidx += 1
+        stream.tail.bidx += 1
       stream.unreadable = true
     return (elem, false)
 
@@ -123,29 +123,29 @@ proc internal_writeElem[T](stream: LispInputStream[T],
   if isNil(stream.buffer):
     return false
 
-  elif stream.tailPos.aidx == stream.headPos.aidx:
-    return stream.tailPos.bidx + 1 < stream.headPos.bidx
+  elif stream.tail.aidx == stream.head.aidx:
+    return stream.tail.bidx + 1 < stream.head.bidx
 
-  elif stream.tailPos.aidx < stream.headPos.aidx:
-    if stream.headPos.bidx == 0:
-      return stream.tailPos.bidx < stream.bufferSize - 2
+  elif stream.tail.aidx < stream.head.aidx:
+    if stream.head.bidx == 0:
+      return stream.tail.bidx < stream.bufferSize - 2
     else:
       return true
 
-  elif stream.tailPos.aidx > stream.headPos.aidx:
+  elif stream.tail.aidx > stream.head.aidx:
     raise newException(Exception, "oops! stream is broken...")
 
   else:
-    stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elem
+    stream.buffer[stream.head.aidx][stream.head.bidx] = elem
 
-    if stream.headPos.bidx == stream.buffer.len - 1:
+    if stream.head.bidx == stream.buffer.len - 1:
       stream.buffer.add(newSeq[T](stream.bufferSize))
-      stream.headPos.aidx += 1
-      stream.headPos.bidx = 0
+      stream.head.aidx += 1
+      stream.head.bidx = 0
 
     else:
-      stream.buffer[stream.headPos.aidx][stream.headPos.bidx] = elem
-      stream.headPos.bidx += 1
+      stream.buffer[stream.head.aidx][stream.head.bidx] = elem
+      stream.head.bidx += 1
 
     return true
 
