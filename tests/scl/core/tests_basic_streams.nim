@@ -9,6 +9,9 @@ import scl.core.basic_streams
 proc ch(ch: char, eof: bool): (LispCodepoint, bool) =
   return (LispCodepoint(ord(ch)), eof)
 
+proc str2cp(str: string): seq[LispCodepoint] =
+  return toSeq(decodeBytes("abc"[0..<str.len]))
+
 suite "stream construction":
   test "can make input stream":
     let s = makeLispCharacterInputStream(4)
@@ -28,7 +31,7 @@ suite "stream construction":
 
   test "initial contents less than buffer length":
     let
-      str = toSeq(decodeBytes("abc"))
+      str = str2cp("abc")
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
@@ -39,7 +42,7 @@ suite "stream construction":
 
   test "initial contents which has length of the buffer":
     let
-      str = toSeq(decodeBytes("abcd"))
+      str = str2cp("abcd")
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
@@ -51,7 +54,7 @@ suite "stream construction":
 
   test "initial contents more than buffer length":
     let
-      str = toSeq(decodeBytes("abcde"))
+      str = str2cp("abcde")
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
