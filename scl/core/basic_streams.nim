@@ -183,7 +183,8 @@ proc internal_clearInput[T](stream: LispInputStream[T]) =
 
 
 when isMainModule:
-  var s = makeLispCharacterInputStream(sequtils.toSeq(decodeBytes("あいうえおか")))
+  var s = makeLispCharacterInputStream(
+    1024, sequtils.toSeq(utf8.decodeBytes("あいうえおか")))
 
   proc readPrint[T](stream: LispInputStream[T]): LispCodepoint =
     var
@@ -211,7 +212,7 @@ when isMainModule:
 
   ch = readPrint(s) # i
 
-  internal_clearInput(s)
+  # internal_clearInput(s)
   ch = readPrint(s) # u
 
   ch = readPrint(s) # e
