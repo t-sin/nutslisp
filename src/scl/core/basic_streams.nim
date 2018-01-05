@@ -64,6 +64,8 @@ proc makeAndCopySeq[T](src: seq[T],
 
 proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
                                    str: seq[LispCodepoint] = nil): LispCharacterInputStream =
+  assert(bufSize > 0)
+
   var stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
