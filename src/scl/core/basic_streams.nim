@@ -122,7 +122,7 @@ proc internal_readElem*[T](stream: LispInputStream[T],
   assertPos(stream)
   if (stream.tail.aidx == stream.head.aidx and
       stream.tail.bidx == stream.head.bidx):
-    return (0'i64, false)
+    return (0'i64, true)
   else:
     var
       elem = stream.buffer[stream.tail.aidx][stream.tail.bidx]
