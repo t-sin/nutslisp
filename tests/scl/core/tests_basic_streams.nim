@@ -81,3 +81,13 @@ suite "stream construction":
       ch('h', false) == internal_readElem(s, false)
       ch('i', false) == internal_readElem(s, false)
       internal_listen(s) == false
+
+suite "close Lisp streams":
+  test "Lisp streams construction":
+    let s = makeLispCharacterInputStream(4)
+    check:
+      not isNil(s)
+    check(true == internal_close(s))
+    check:
+      not isNil(s)
+    check(false == internal_close(s))
