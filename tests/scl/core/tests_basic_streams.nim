@@ -64,3 +64,20 @@ suite "stream construction":
       ch('d', false) == internal_readElem(s, false)
       ch('e', false) == internal_readElem(s, false)
       internal_listen(s) == false
+
+  test "more initial contents":
+    let
+      str = str2cp("abcdefghi")
+      s = makeLispCharacterInputStream(4, str)
+    require(not isNil(s))
+    check:
+      ch('a', false) == internal_readElem(s, false)
+      ch('b', false) == internal_readElem(s, false)
+      ch('c', false) == internal_readElem(s, false)
+      ch('d', false) == internal_readElem(s, false)
+      ch('e', false) == internal_readElem(s, false)
+      ch('f', false) == internal_readElem(s, false)
+      ch('g', false) == internal_readElem(s, false)
+      ch('h', false) == internal_readElem(s, false)
+      ch('i', false) == internal_readElem(s, false)
+      internal_listen(s) == false
