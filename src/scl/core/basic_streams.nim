@@ -118,9 +118,6 @@ proc internal_listen*[T](stream: LispInputStream[T]): bool =
 
 proc internal_readElem*[T](stream: LispInputStream[T],
                            peek: bool): (T, StreamEOF) =
-  echo "head: " & repr(stream.head)
-  echo "tail: " & repr(stream.tail)
-  # echo repr(stream.buffer)
   if isNil(stream.buffer):
     return (0'i64, true)
 
