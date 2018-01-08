@@ -10,7 +10,7 @@ proc ch(ch: char, eof: bool): (LispCodepoint, bool) =
   return (LispCodepoint(ord(ch)), eof)
 
 proc str2cp(str: string): seq[LispCodepoint] =
-  return toSeq(decodeBytes("abc"[0..<str.len]))
+  return toSeq(decodeBytes(str))
 
 suite "stream construction":
   test "can make input stream":
