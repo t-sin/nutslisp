@@ -9,7 +9,7 @@ type
   StreamEOF = bool
   StreamBufferIndex = int32
   StreamBufferArrayIndex = int32
-  StreamPos = object
+  StreamPos = ref object
     aidx: StreamBufferArrayIndex
     bidx: StreamBufferIndex
 
