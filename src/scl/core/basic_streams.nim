@@ -57,7 +57,12 @@ proc toBuffer[T](src: seq[T],
 
 proc makeAndCopySeq[T](src: seq[T],
                        bufSize: StreamBufferIndex): seq[seq[T]]  =
-  let bufNum = StreamBufferArrayIndex(math.ceil(src.len / bufSize))
+  var bufNum: StreamBufferArrayIndex
+  if src.len == bufSize:
+    bufNum = StreamBufferArrayIndex(src.len / bufSize + 1)
+  else:
+    bufNum = StreamBufferArrayIndex(math.ceil(src.len / bufSize))
+
   result = newSeq[seq[T]](bufNum)
   for i in 0..<bufNum:
     result[i] = toBuffer(src, bufSize, i * bufSize)
@@ -88,7 +93,7 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
     stream.tail = StreamPos(aidx: 0, bidx: 0)
   else:
     stream.buffer = makeAndCopySeq(str, bufSize)
-    stream.head = StreamPos(aidx: StreamBufferArrayIndex(math.ceil(str.len / bufSize) - 1),
+    stream.head = StreamPos(aidx: StreamBufferArrayIndex(stream.buffer.len - 1),
                             bidx: StreamBufferindex(str.len mod bufSize))
     stream.tail = StreamPos(aidx: 0, bidx: 0)
 
