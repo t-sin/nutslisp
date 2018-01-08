@@ -45,8 +45,7 @@ proc toBuffer[T](src: seq[T],
                  offset: StreamBufferIndex): seq[T] =
   result = newSeq[T](DefaultStreamBufferSize)
 
-  var
-    length: StreamBufferIndex
+  var length: StreamBufferIndex
   if src.len - offset > bufSize:
     length = bufSize
   else:
@@ -81,7 +80,7 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
                                    str: seq[LispCodepoint] = nil): LispCharacterInputStream =
   assert(bufSize > 0)
 
-  var stream = makeLispObject[LispCharacterInputStream]()
+  let stream = makeLispObject[LispCharacterInputStream]()
   stream.elementType = StreamElementType.setCharacter
   stream.direction = StreamDirectionType.sdtInput
   stream.unreadable = false
@@ -126,8 +125,8 @@ proc internal_readElem*[T](stream: LispInputStream[T],
       stream.tail.bidx == stream.head.bidx):
     return (0'i64, true)
   else:
-    var
-      elem = stream.buffer[stream.tail.aidx][stream.tail.bidx]
+    let elem = stream.buffer[stream.tail.aidx][stream.tail.bidx]
+
     if not peek:
       if stream.tail.bidx + 1 >= stream.bufferSize:
         stream.tail.aidx += 1
@@ -183,7 +182,7 @@ proc internal_unreadElem*[T](stream: LispInputStream[T],
     return false
 
   elif stream.unreadable:
-    var prevPos = prevPos(stream.tail, stream.bufferSize)
+    let prevPos = prevPos(stream.tail, stream.bufferSize)
 
     if prevPos.aidx < 0 or prevPos.bidx < 0:
       return false
