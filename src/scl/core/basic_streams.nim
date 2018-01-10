@@ -43,7 +43,7 @@ type
 proc toBuffer[T](src: seq[T],
                  bufSize: StreamBufferIndex,
                  offset: StreamBufferIndex): seq[T] =
-  result = newSeq[T](DefaultStreamBufferSize)
+  result = newSeq[T](bufSize)
 
   var length: StreamBufferIndex
   if src.len - offset > bufSize:
