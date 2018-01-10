@@ -99,7 +99,9 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
   return stream
 
 proc internal_close*[T](stream: LispInputStream[T]): bool =
-  if isNil(stream.buffer):
+  if isNil(stream):
+    return false
+  elif isNil(stream.buffer):
     return false
   else:
     stream.buffer = nil

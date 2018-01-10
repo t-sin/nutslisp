@@ -91,3 +91,7 @@ suite "close Lisp streams":
     check:
       not isNil(s)
     check(false == internal_close(s))
+
+  test "close nil stream":
+    let s: LispCharacterInputStream = nil
+    check(false ==  internal_close(s))
