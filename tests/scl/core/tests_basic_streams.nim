@@ -24,10 +24,11 @@ suite "stream construction":
   test "zero-length buffer":
     expect Exception:
       let s = makeLispCharacterInputStream(0)
-    expect Exception:
-      let
-        str = str2cp("")
-        s = makeLispCharacterInputStream(4, str)
+
+    let
+      str = str2cp("")
+      s = makeLispCharacterInputStream(4, str)
+    check(false == internal_listen(s))
 
   test "negative-length buffer":
     expect Exception:
