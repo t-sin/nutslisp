@@ -57,7 +57,9 @@ proc toBuffer[T](src: seq[T],
 proc makeAndCopySeq[T](src: seq[T],
                        bufSize: StreamBufferIndex): seq[seq[T]]  =
   var bufNum: StreamBufferArrayIndex
-  if src.len == bufSize:
+  if src.len == 0:
+    bufNum = 1
+  elif src.len == bufSize:
     bufNum = StreamBufferArrayIndex(src.len / bufSize + 1)
   else:
     bufNum = StreamBufferArrayIndex(math.ceil(src.len / bufSize))
