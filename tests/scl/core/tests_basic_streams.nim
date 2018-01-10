@@ -95,3 +95,50 @@ suite "close Lisp streams":
   test "close nil stream":
     let s: LispCharacterInputStream = nil
     check(false ==  internal_close(s))
+
+suite "check if buffer is available":
+  test "zero length buffer":
+    let s = makeLispCharacterInputStream(4)
+    check:
+      false == internal_listen(s)
+
+  test "buffer length 1":
+    let
+      str = str2cp("a")
+      s = makeLispCharacterInputStream(4, str)
+    check:
+      true == internal_listen(s)
+      (ch('a'), false) == internal_readElem(s, false)
+      false == internal_listen(s)
+
+  test "buffer array length 2":
+    let
+      str = str2cp("abcde")
+      s = makeLispCharacterInputStream(4, str)
+    check:
+      true == internal_listen(s)
+      (ch('a'), false) == internal_readElem(s, false)
+      true == internal_listen(s)
+      (ch('b'), false) == internal_readElem(s, false)
+      true == internal_listen(s)
+      (ch('c'), false) == internal_readElem(s, false)
+      true == internal_listen(s)
+      (ch('d'), false) == internal_readElem(s, false)
+      true == internal_listen(s)
+      (ch('e'), false) == internal_readElem(s, false)
+      false == internal_listen(s)
+
+  test "write to buffer":
+    let
+      str = str2cp("")
+      s = makeLispCharacterInputStream(4, str)
+    check:
+      false == internal_listen(s)
+      true == internal_writeElem(s, ch('a'))
+      true == internal_listen(s)
+      true == internal_writeElem(s, ch('b'))
+      true == internal_listen(s)
+      (ch('a'), false) == internal_readElem(s, false)
+      true == internal_listen(s)
+      (ch('b'), false) == internal_readElem(s, false)
+      false == internal_listen(s)
