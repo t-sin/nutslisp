@@ -6,8 +6,8 @@ import scl.core.utf8
 import scl.core.basic_streams
 
 
-proc ch(ch: char, eof: bool): (LispCodepoint, bool) =
-  return (LispCodepoint(ord(ch)), eof)
+proc ch(ch: char): LispCodepoint =
+  return LispCodepoint(ord(ch))
 
 proc str2cp(str: string): seq[LispCodepoint] =
   return toSeq(decodeBytes(str))
@@ -35,9 +35,9 @@ suite "stream construction":
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
-      ch('a', false) == internal_readElem(s, false)
-      ch('b', false) == internal_readElem(s, false)
-      ch('c', false) == internal_readElem(s, false)
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
       internal_listen(s) == false
 
   test "initial contents which has length of the buffer":
@@ -46,10 +46,10 @@ suite "stream construction":
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
-      ch('a', false) == internal_readElem(s, false)
-      ch('b', false) == internal_readElem(s, false)
-      ch('c', false) == internal_readElem(s, false)
-      ch('d', false) == internal_readElem(s, false)
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('d'), false) == internal_readElem(s, false)
       internal_listen(s) == false
 
   test "initial contents more than buffer length":
@@ -58,11 +58,11 @@ suite "stream construction":
       s = makeLispCharacterInputStream(4, str)
     require(not isNil(s))
     check:
-      ch('a', false) == internal_readElem(s, false)
-      ch('b', false) == internal_readElem(s, false)
-      ch('c', false) == internal_readElem(s, false)
-      ch('d', false) == internal_readElem(s, false)
-      ch('e', false) == internal_readElem(s, false)
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('d'), false) == internal_readElem(s, false)
+      (ch('e'), false) == internal_readElem(s, false)
       internal_listen(s) == false
 
   test "more initial contents":
