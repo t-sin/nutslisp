@@ -133,7 +133,7 @@ suite "check if buffer is available":
       (ch('e'), false) == internal_readElem(s, false)
       false == internal_listen(s)
 
-  test "write to buffer":
+  test "simple writing":
     let
       str = str2cp("")
       s = makeLispCharacterInputStream(4, str)
