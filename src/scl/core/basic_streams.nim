@@ -94,7 +94,7 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
     stream.tail = StreamPos(aidx: 0, bidx: 0)
   else:
     stream.buffer = makeAndCopySeq(str, bufSize)
-    stream.head = StreamPos(aidx: StreamBufferArrayIndex(stream.buffer.len - 1),
+    stream.head = StreamPos(aidx: StreamBufferArrayIndex(str.len / bufSize),
                             bidx: StreamBufferindex(str.len mod bufSize))
     stream.tail = StreamPos(aidx: 0, bidx: 0)
 
