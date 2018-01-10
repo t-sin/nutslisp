@@ -135,6 +135,7 @@ proc internal_readElem*[T](stream: LispInputStream[T],
       if stream.tail.bidx + 1 >= stream.bufferSize:
         stream.tail.aidx += 1
         stream.tail.bidx = (stream.tail.bidx + 1) mod stream.bufferSize
+        # TODO: free buffer
       else:
         stream.tail.bidx += 1
       stream.unreadable = true
