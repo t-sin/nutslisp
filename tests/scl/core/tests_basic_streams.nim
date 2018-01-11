@@ -235,3 +235,41 @@ suite "read element for internal":
     discard internal_writeElem(s, ch('e'))
     check((ch('e'), false) == internal_readElem(s, false))
     check((ch('\x0'), true) == internal_readElem(s, false))
+
+suite "write element for internal":
+  test "write to empty stream":
+    let s = makeLispCharacterInputStream(4)
+
+    check:
+      true == internal_writeElem(s, ch('a'))
+      (ch('a'), false) == internal_readElem(s, false)
+
+  test "write to stream which has initial contents":
+    let
+      str = str2cp("ab")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      true == internal_writeElem(s, ch('c'))
+
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('\x0'), true) == internal_readElem(s, false)
+
+  test "write over buffer array":
+    let s = makeLispCharacterInputStream(4)
+
+    check:
+      true == internal_writeElem(s, ch('a'))
+      true == internal_writeElem(s, ch('b'))
+      true == internal_writeElem(s, ch('c'))
+      true == internal_writeElem(s, ch('d'))
+      true == internal_writeElem(s, ch('e'))
+
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('d'), false) == internal_readElem(s, false)
+      (ch('e'), false) == internal_readElem(s, false)
+      (ch('\x0'), true) == internal_readElem(s, false)
