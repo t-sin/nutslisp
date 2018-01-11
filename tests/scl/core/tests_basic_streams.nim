@@ -99,7 +99,8 @@ suite "close Lisp streams":
 
   test "close nil stream":
     let s: LispCharacterInputStream = nil
-    check(false ==  internal_close(s))
+    expect Exception:
+      discard internal_close(s)
 
 suite "check if buffer is available":
   test "zero length buffer":

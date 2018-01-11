@@ -102,7 +102,8 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
 
 proc internal_close*[T](stream: LispInputStream[T]): bool =
   if isNil(stream):
-    return false
+    raise newException(Exception, "stream is nil!")
+
   elif isNil(stream.buffer):
     return false
   else:
@@ -121,6 +122,9 @@ proc internal_listen*[T](stream: LispInputStream[T]): bool =
 
 proc internal_readElem*[T](stream: LispInputStream[T],
                            peek: bool): (T, StreamEOF) =
+  if isNil(stream):
+    raise newException(Exception, "stream is nil!")
+
   if isNil(stream.buffer):
     return (0'i64, true)
 
@@ -143,6 +147,9 @@ proc internal_readElem*[T](stream: LispInputStream[T],
 
 proc internal_writeElem*[T](stream: LispInputStream[T],
                             elem: T): bool =
+  if isNil(stream):
+    raise newException(Exception, "stream is nil!")
+
   if isNil(stream.buffer):
     return false
 
@@ -170,6 +177,9 @@ proc prevPos(pos: StreamPos,
 
 proc internal_unreadElem*[T](stream: LispInputStream[T],
                              elm: T): bool =
+  if isNil(stream):
+    raise newException(Exception, "stream is nil!")
+
   if isNil(stream.buffer):
     return false
 
