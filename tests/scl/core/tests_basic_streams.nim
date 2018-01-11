@@ -148,3 +148,90 @@ suite "check if buffer is available":
       true == internal_listen(s)
       (ch('b'), false) == internal_readElem(s, false)
       false == internal_listen(s)
+
+suite "read element for internal":
+  test "return EOF true and 0 when elements exists in buffer":
+    var s = makeLispCharacterInputStream(4)
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    let str = str2cp("")
+    s = makeLispCharacterInputStream(4, str)
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+  test "return EOF true and 0 when nil stream":
+    let s: LispCharacterInputStream = nil
+    expect Exception:
+      check((ch('\x0'), true) == internal_readElem(s, false))
+    expect Exception:
+      check((ch('\x0'), true) == internal_readElem(s, true))
+
+  test "read initial contents":
+    let
+      str = str2cp("abcde")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('d'), false) == internal_readElem(s, false)
+      (ch('e'), false) == internal_readElem(s, false)
+      (ch('\x0'), true) == internal_readElem(s, false)
+
+  test "read and peek initial contents":
+    let
+      str = str2cp("abcde")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      (ch('a'), false) == internal_readElem(s, true)
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+
+      (ch('d'), false) == internal_readElem(s, true)
+      (ch('d'), false) == internal_readElem(s, true)
+      (ch('d'), false) == internal_readElem(s, false)
+      (ch('e'), false) == internal_readElem(s, false)
+      (ch('\x0'), true) == internal_readElem(s, false)
+
+  test "read contents that wrote":
+    let s = makeLispCharacterInputStream(4)
+    discard internal_writeElem(s, ch('a'))
+    discard internal_writeElem(s, ch('b'))
+    discard internal_writeElem(s, ch('c'))
+    discard internal_writeElem(s, ch('d'))
+    discard internal_writeElem(s, ch('e'))
+
+    check:
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      (ch('d'), false) == internal_readElem(s, false)
+      (ch('e'), false) == internal_readElem(s, false)
+      (ch('\x0'), true) == internal_readElem(s, false)
+
+  test "read and write alternately":
+    let s = makeLispCharacterInputStream(4)
+
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    discard internal_writeElem(s, ch('a'))
+    check((ch('a'), false) == internal_readElem(s, false))
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    discard internal_writeElem(s, ch('b'))
+    check((ch('b'), false) == internal_readElem(s, false))
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    discard internal_writeElem(s, ch('c'))
+    check((ch('c'), false) == internal_readElem(s, false))
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    discard internal_writeElem(s, ch('d'))
+    check((ch('d'), false) == internal_readElem(s, false))
+    check((ch('\x0'), true) == internal_readElem(s, false))
+
+    discard internal_writeElem(s, ch('e'))
+    check((ch('e'), false) == internal_readElem(s, false))
+    check((ch('\x0'), true) == internal_readElem(s, false))
