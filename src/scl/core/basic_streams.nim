@@ -183,7 +183,8 @@ proc internal_unreadElem*[T](stream: LispInputStream[T],
   if isNil(stream.buffer):
     return false
 
-  elif stream.unreadable:
+  assertPos(stream)
+  if stream.unreadable:
     let prevPos = prevPos(stream.tail, stream.bufferSize)
 
     if prevPos.aidx < 0 or prevPos.bidx < 0:
