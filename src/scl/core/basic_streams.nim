@@ -113,6 +113,9 @@ proc internal_close*[T](stream: LispInputStream[T]): bool =
     return true
 
 proc internal_listen*[T](stream: LispInputStream[T]): bool =
+  if isNil(stream):
+    raise newException(Exception, "stream is nil!")
+
   if stream.tail.aidx < stream.head.aidx:
     return true
   elif stream.tail.aidx == stream.head.aidx:
@@ -199,6 +202,9 @@ proc internal_unreadElem*[T](stream: LispInputStream[T],
   return false
 
 proc internal_clearInput*[T](stream: LispInputStream[T]) =
+  if isNil(stream):
+    raise newException(Exception, "stream is nil!")
+
   stream.unreadable = false
   stream.tail = stream.head
 
