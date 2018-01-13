@@ -189,8 +189,8 @@ proc internal_unreadElem*[T](stream: LispInputStream[T],
 
     if prevPos.aidx < 0 or prevPos.bidx < 0:
       return false
-    elif (prevPos.aidx != stream.head.aidx and
-          prevPos.bidx != stream.head.bidx and
+    elif ((prevPos.aidx != stream.head.aidx or
+           prevPos.bidx != stream.head.bidx) and
           stream.buffer[prevPos.aidx][prevPos.bidx] == elm):
       stream.unreadable = false
       stream.tail = prevPos
