@@ -336,3 +336,25 @@ suite "unread element for internal":
 
       (ch('c'), false) == internal_readElem(s, false)
       false == internal_listen(s)
+
+suite "clear input":
+  test "operation to nil stream":
+    let s: LispCharacterInputStream = nil
+    expect Exception:
+      internal_clearInput(s)
+
+  test "operation to clear buffer":
+    let s = makeLispCharacterInputStream(4)
+
+    check(false == internal_listen(s))
+    internal_clearInput(s)
+    check(false == internal_listen(s))
+
+  test "clear initial contents":
+    let
+      str = str2cp("abc")
+      s = makeLispCharacterInputStream(4, str)
+
+    check(true == internal_listen(s))
+    internal_clearInput(s)
+    check(false == internal_listen(s))
