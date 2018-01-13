@@ -273,3 +273,66 @@ suite "write element for internal":
       (ch('d'), false) == internal_readElem(s, false)
       (ch('e'), false) == internal_readElem(s, false)
       (ch('\x0'), true) == internal_readElem(s, false)
+
+suite "unread element for internal":
+  test "unread to empty stream":
+    let s = makeLispCharacterInputStream(4)
+
+    check:
+      false == internal_unreadElem(s, ch('a'))
+
+  test "unread to nil":
+    let s: LispCharacterInputStream = nil
+
+    expect Exception:
+      discard internal_unreadElem(s, ch('a'))
+
+  test "unread to closed stream":
+    let s = makeLispCharacterInputStream(4)
+
+    discard internal_close(s)
+    check:
+      false == internal_unreadElem(s, ch('a'))
+
+  test "unread element with non-read stream":
+    let
+      str = str2cp("abc")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      false == internal_unreadElem(s, ch('a'))
+
+  test "unread element":
+    let
+      str = str2cp("abc")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      (ch('a'), false) == internal_readElem(s, false)
+      true == internal_unreadElem(s, ch('a'))
+      true == internal_listen(s)
+
+  test "unread element repeatedly":
+    let
+      str = str2cp("abc")
+      s = makeLispCharacterInputStream(4, str)
+
+    check:
+      (ch('a'), false) == internal_readElem(s, false)
+      true == internal_unreadElem(s, ch('a'))
+
+      (ch('a'), false) == internal_readElem(s, false)
+      (ch('b'), false) == internal_readElem(s, false)
+      (ch('c'), false) == internal_readElem(s, false)
+      true == internal_unreadElem(s, ch('c'))
+
+      (ch('c'), false) == internal_readElem(s, false)
+
+      # End of buffer
+      false == internal_listen(s)
+
+      true == internal_unreadElem(s, ch('c'))
+      true == internal_listen(s)
+
+      (ch('c'), false) == internal_readElem(s, false)
+      false == internal_listen(s)
