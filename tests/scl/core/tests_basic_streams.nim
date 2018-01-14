@@ -358,3 +358,22 @@ suite "clear input":
     check(true == internal_listen(s))
     internal_clearInput(s)
     check(false == internal_listen(s))
+
+  test "clear written contents":
+    let s = makeLispCharacterInputStream(4)
+
+    check(false == internal_listen(s))
+
+    discard internal_writeElem(s, ch('a'))
+    check(true == internal_listen(s))
+    internal_clearInput(s)
+    check(false == internal_listen(s))
+
+  test "clear contents over length of buffer":
+    let
+      str =str2cp("abcde")
+      s = makeLispCharacterInputStream(4, str)
+
+    check(true == internal_listen(s))
+    internal_clearInput(s)
+    check(false == internal_listen(s))
