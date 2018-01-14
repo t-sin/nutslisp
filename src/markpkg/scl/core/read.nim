@@ -5,17 +5,17 @@ import runtime
 
 
 proc readDelimitedList(ch: LispCharacter,
-                       inputStream: LispInputStream,
+                       inputStream: LispInputStream[LispCharacter],
                        recursiveP: bool): LispList =
   discard
 
-proc readPreservingWhitespace(inputStream: LispinputStream,
+proc readPreservingWhitespace(inputStream: LispinputStream[LispCharacter],
                               eofErrorP: bool,
                               eofErrorValue: LispT,
                               recursiveP: bool): LispCharacter =
   discard
 
-proc read(inputStream: LispinputStream,
+proc read(inputStream: LispinputStream[LispCharacter],
           eofErrorP: bool,
           eofErrorValue: LispT,
           recursiveP: bool): LispCharacter =
