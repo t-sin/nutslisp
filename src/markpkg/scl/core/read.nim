@@ -16,9 +16,9 @@ proc readPreservingWhitespace(inputStream: LispinputStream,
   discard
 
 proc read(inputStream: LispinputStream,
-                              eofErrorP: bool,
-                              eofErrorValue: LispT,
-                              recursiveP: bool): LispCharacter =
+          eofErrorP: bool,
+          eofErrorValue: LispT,
+          recursiveP: bool): LispCharacter =
   discard
 
 proc readFromString(str: string)
