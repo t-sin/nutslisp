@@ -50,7 +50,9 @@ type
 
   LispFunction* = ref object of LispT
     lambdaList*: LispList
+    nativeP*: bool
     body*: LispT
+    nativeBody*: proc ()
 
 
   LispPackage* = ref object of LispT
