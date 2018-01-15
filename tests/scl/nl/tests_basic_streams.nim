@@ -1,9 +1,9 @@
 import sequtils
 import unittest
 
-import markpkg.scl.core.objects
-import markpkg.scl.core.utf8
-import markpkg.scl.core.basic_streams
+import markpkg.scl.nl.objects
+import markpkg.scl.nl.utf8
+import markpkg.scl.nl.basic_streams
 
 
 proc ch(ch: char): LispCodepoint =
