@@ -48,12 +48,3 @@ proc lisp_intern*(rt: LispRuntime,
     return intern(name, rt.currentPackage)[0]
   else:
     return intern(name, pkg)[0]
-
-proc bindValue*(rt: LispRuntime,
-                s: LispSymbol,
-                val: LispT): LispEnvironment =
-
-  return nil
-
-proc unbindValue() =
-  discard
