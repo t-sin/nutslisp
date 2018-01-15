@@ -95,3 +95,10 @@ type
 
 
   LispCondition* = ref object of Exception
+
+
+type
+  LispRuntime* = ref object of RootObj
+    readtable*: LispReadtable
+    packageTable* : TableRef[string, LispPackage]
+    currentPackage*: LispPackage

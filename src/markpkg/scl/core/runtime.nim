@@ -3,13 +3,6 @@ import tables
 import objects
 
 
-type
-  LispRuntime* = ref object of RootObj
-    readtable*: LispReadtable
-    packageTable* : TableRef[string, LispPackage]
-    currentPackage*: LispPackage
-
-
 proc initEnvironment*(): LispEnvironment =
   var env = makeLispObject[LispEnvironment]()
   env.binding = newTable[LispObjectId, LispT]()
