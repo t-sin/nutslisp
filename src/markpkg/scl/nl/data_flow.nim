@@ -1,7 +1,7 @@
 import macros
 
 import objects
-import runtime
+import nl_runtime
 
 
 template objAreTyped(t: untyped): untyped =
