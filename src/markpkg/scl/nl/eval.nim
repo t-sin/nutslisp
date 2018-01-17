@@ -98,7 +98,7 @@ proc eval(env: LispEnvironment,
   if isNil(obj):
     raise newException(Exception, "nil!!")
 
-  if (obj of LispCharacter or
+  elif (obj of LispCharacter or
       obj of LispNumber or
       obj of LispNull or
       obj of LispArray or
@@ -106,7 +106,7 @@ proc eval(env: LispEnvironment,
       obj of LispString):
     return obj
 
-  if obj of LispSymbol:
+  elif obj of LispSymbol:
     var s = LispSymbol(obj)
 
     if isNil(env):
@@ -119,7 +119,7 @@ proc eval(env: LispEnvironment,
     else:
       raise newException(Exception, "unbound-variable")
 
-  if obj of LispList:
+  elif obj of LispList:
     var
       c = LispList(obj)
       op = LispSymbol(c.car)
