@@ -49,7 +49,7 @@ proc evalLambdaExp(env: LispEnvironment,
     fn.lambdaList = nil
   else:
     fn.lambdaList = LispList(args.car)
-  fn.body = nil
+  fn.body = args.cdr
   return fn
 
 proc bindLambdaList(env: LispEnvironment,
