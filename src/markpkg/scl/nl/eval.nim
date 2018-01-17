@@ -98,12 +98,12 @@ proc eval(env: LispEnvironment,
   if isNil(obj):
     raise newException(Exception, "nil!!")
 
-  elif (obj of LispCharacter or
-      obj of LispNumber or
-      obj of LispNull or
-      obj of LispArray or
-      obj of LispVector or
-      obj of LispString):
+  elif (obj of LispCharacter):
+        # obj of LispNumber or
+        # obj of LispNull or
+        # obj of LispArray or
+        # obj of LispVector or
+        # obj of LispString):
     return obj
 
   elif obj of LispSymbol:
