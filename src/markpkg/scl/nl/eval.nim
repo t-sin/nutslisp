@@ -82,12 +82,28 @@ proc bindLambdaList(env: LispEnvironment,
       newEnv.binding[lambda_cdr.car.id] = args_cdr.car
       return bindLambdaList(env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
 
+proc list2seq(list: LispList): seq[LispT] =
+  if list of LispNull:
+    return @[]
+
+  elif list.cdr of LispNull:
+    return @[list.car]
+
+  else:
+    var rest = list2seq(LispList(list.cdr))
+    rest.add(list.car)
+    return rest
+
 proc funcall(env: LispEnvironment,
              fn: LispFunction,
              args: LispList): LispT =
-  var newEnv = bindLambdaList(env, fn.lambdaList, args)
-  echo repr(newEnv)
-  return eval(newEnv, fn.body)
+  if fn.nativeP:
+    return fn.nativeBody(list2seq(args))
+
+  else:
+    var newEnv = bindLambdaList(env, fn.lambdaList, args)
+    echo repr(newEnv)
+    return eval(newEnv, fn.body)
 
 proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
@@ -151,6 +167,16 @@ proc eval(env: LispEnvironment,
 import print
 
 when isMainModule:
-  var result = eval(initEnvironment(),
-                    LispList(car: LispSymbol(name: "hoge"),
-                             cdr: LispNull()))
+  var
+    env = initEnvironment()
+    fn_name = makeLispObject[LispSymbol]()
+    fn = makeLispObject[LispFunction]()
+
+  fn.nativeP = true
+  fn.nativeBody = hello_fn
+  fn_name.name = "hoge"
+  fn_name.function = fn
+  env.binding[fn_name.id] = fn
+
+  var result = eval(env,
+                    LispList(car: fn_name, cdr: LispNull()))
