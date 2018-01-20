@@ -6,6 +6,12 @@ import print
 import utf8
 
 
+template cp(ch: untyped): untyped =
+  LispCodepoint(ord(ch))
+
+const nl_whitespace = @[cp(' '), cp('\t'), cp('\r'), cp('\l')]
+const nl_terminate_macro = @[cp(')')]
+
 proc nl_read*(s: LispCharacterInputStream): LispT
 
 proc readParenthesis(s: LispCharacterInputStream): LispT =
@@ -40,7 +46,29 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
       tail.car = nl_read(s)
 
 proc readConstituent(s: LispCharacterInputStream): LispT =
-  discard
+  var
+    name = ""
+    cp: LispCodepoint
+    eof: bool
+
+  while true:
+    (cp, eof) = internal_readElem(s, true)
+
+    if eof or cp in nl_whitespace or cp in nl_terminate_macro:
+      if cp in nl_whitespace:
+        discard internal_readElem(s, false)
+
+      if name.len <= 0:
+        return makeLispObject[LispNull]()
+
+      else:
+        let sym = makeLispObject[LispSymbol]()
+        sym.name = name
+        return sym
+
+    else:
+      discard internal_readElem(s, false)
+      name.add(encodeCodepoint(cp))
 
 proc nl_read*(s: LispCharacterInputStream): LispT =
   var
