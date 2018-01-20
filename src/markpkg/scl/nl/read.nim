@@ -1,24 +1,30 @@
 import objects
 import basic_streams
-import readtable
-import runtime
+import print
 
 
-proc readDelimitedList(ch: LispCharacter,
-                       inputStream: LispInputStream[LispCharacter],
-                       recursiveP: bool): LispList =
+proc readParenthesis(s: LispCharacterInputStream): LispT =
+  return makeLispObject[LispNull]()
+
+proc readConstituent(s: LispCharacterInputStream): LispT =
   discard
 
-proc readPreservingWhitespace(inputStream: LispinputStream[LispCharacter],
-                              eofErrorP: bool,
-                              eofErrorValue: LispT,
-                              recursiveP: bool): LispCharacter =
-  discard
+proc nl_read*(s: LispCharacterInputStream): LispT =
+  var
+    cp: LispCodepoint
+    eof: bool
 
-proc read(inputStream: LispinputStream[LispCharacter],
-          eofErrorP: bool,
-          eofErrorValue: LispT,
-          recursiveP: bool): LispCharacter =
-  discard
+  (cp, eof) = internal_readElem(s, false)
+  if eof:
+    return makeLispObject[LispNull]()
 
-proc readFromString(str: string)
+  case cp
+  of ord('('):
+    return readParenthesis(s)
+  else:
+    return makeLispObject[LispNull]()
+
+when isMainModule:
+  let s = makeLispCharacterInputStream(64)
+
+  echo print.write(readParenthesis(s))
