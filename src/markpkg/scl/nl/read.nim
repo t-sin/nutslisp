@@ -14,6 +14,21 @@ const nl_terminate_macro = @[cp(')')]
 
 proc nl_read*(s: LispCharacterInputStream): LispT
 
+proc skip(chs: seq[LispCodepoint],
+          s: LispCharacterInputStream) =
+  var
+    cp: LispCodepoint
+    eof: bool
+
+  while true:
+    (cp, eof) = internal_readElem(s, true)
+
+    if cp in chs:
+      discard internal_readElem(s, false)
+
+    else:
+      break
+
 proc readParenthesis(s: LispCharacterInputStream): LispT =
   var
     cp: LispCodepoint
@@ -75,19 +90,24 @@ proc nl_read*(s: LispCharacterInputStream): LispT =
     cp: LispCodepoint
     eof: bool
 
-  (cp, eof) = internal_readElem(s, false)
+  skip(nl_whitespace, s)
+
+  (cp, eof) = internal_readElem(s, true)
 
   if eof:
     return makeLispObject[LispNull]()
 
   case cp
   of ord('('):
+    discard internal_readElem(s, false)
     return readParenthesis(s)
 
   else:
-    return makeLispObject[LispNull]()
+    return readConstituent(s)
 
 when isMainModule:
-  let s = makeLispCharacterInputStream(64, toSeq(decodeBytes("(a)")))
+  let s = makeLispCharacterInputStream(64, toSeq(decodeBytes("(a (b) c)")))
+  let sexp = nl_read(s)
 
-  echo write(nl_read(s))
+  echo write(sexp)
+
