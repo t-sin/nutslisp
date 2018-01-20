@@ -12,24 +12,32 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
   var
     cp: LispCodepoint
     eof: bool
-    list = makeLispObject[LispList]()
-    tail = list
+    firstP = true
+    list: LispList
+    tail: LispList
 
   while true:
-    (cp, eof) = internal_readElem(s, false)
+    (cp, eof) = internal_readElem(s, true)
+
+    if cp != ord(')'):
+      let cons = makeLispObject[LispList]()
+      if firstP:
+        list = cons
+        firstP = false
+      else:
+        tail.cdr = cons
+      tail = cons
 
     if eof:
       raise newException(Exception, "read error while parsing through in list")
 
     elif cp == ord(')'):
+      discard internal_readElem(s, false)
       tail.cdr = makeLispObject[LispNull]()
       return list
 
     else:
-      let val = nl_read(s)
-      tail.car = val
-      tail.cdr = makeLispObject[LispList]()
-      tail = LispList(tail.cdr)
+      tail.car = nl_read(s)
 
 proc readConstituent(s: LispCharacterInputStream): LispT =
   discard
