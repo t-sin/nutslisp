@@ -13,9 +13,6 @@ type
     aidx: StreamBufferArrayIndex
     bidx: StreamBufferIndex
 
-const
-  DefaultStreamBufferSize: StreamBufferIndex = 1024
-
 type
   StreamDirectionType* = enum
     sdtInput, sdtOutput, stdInputOutput
