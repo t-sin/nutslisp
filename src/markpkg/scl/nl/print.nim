@@ -1,6 +1,8 @@
 import objects
 
 proc write*(obj: LispT): string =
+  assert(not isNil(obj))
+
   if obj of LispNull:
     return "nil"
 
