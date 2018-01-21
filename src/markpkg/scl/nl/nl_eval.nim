@@ -2,7 +2,6 @@ import tables
 
 import objects
 import nl_runtime
-import print
 import data_flow
 
 
@@ -62,8 +61,6 @@ proc bindLambdaList(env: LispEnvironment,
   if isNil(newEnv):
     new_env = initEnvironment()
     new_env.parent = env
-    echo "lambdalist = " & write(lambdaList)
-    echo "args = " & write(args)
   else:
     new_env = newEnv
 
