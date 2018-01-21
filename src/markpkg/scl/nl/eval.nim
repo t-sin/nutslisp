@@ -163,20 +163,3 @@ proc nl_eval*(env: LispEnvironment,
 
   else:
     return obj
-
-import print
-
-when isMainModule:
-  var
-    env = initEnvironment()
-    fn_name = makeLispObject[LispSymbol]()
-    fn = makeLispObject[LispFunction]()
-
-  fn.nativeP = true
-  fn.nativeBody = hello_fn
-  fn_name.name = "hoge"
-  fn_name.function = fn
-  env.binding[fn_name.id] = fn
-
-  var result = eval(env,
-                    LispList(car: fn_name, cdr: LispNull()))
