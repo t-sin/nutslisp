@@ -97,7 +97,7 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
 
   return stream
 
-proc internal_close*[T](stream: LispInputStream[T]): bool =
+proc nl_close*[T](stream: LispInputStream[T]): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 
@@ -109,7 +109,7 @@ proc internal_close*[T](stream: LispInputStream[T]): bool =
     stream.tail = nil
     return true
 
-proc internal_listen*[T](stream: LispInputStream[T]): bool =
+proc nl_listen*[T](stream: LispInputStream[T]): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 
@@ -120,7 +120,7 @@ proc internal_listen*[T](stream: LispInputStream[T]): bool =
   else:
     return false
 
-proc internal_readElem*[T](stream: LispInputStream[T],
+proc nl_readElem*[T](stream: LispInputStream[T],
                            peek: bool): (T, StreamEOF) =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -145,7 +145,7 @@ proc internal_readElem*[T](stream: LispInputStream[T],
       stream.unreadable = true
     return (elem, false)
 
-proc internal_writeElem*[T](stream: LispInputStream[T],
+proc nl_writeElem*[T](stream: LispInputStream[T],
                             elem: T): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -175,7 +175,7 @@ proc prevPos(pos: StreamPos,
     return StreamPos(aidx: pos.aidx,
                      bidx: pos.bidx - 1)
 
-proc internal_unreadElem*[T](stream: LispInputStream[T],
+proc nl_unreadElem*[T](stream: LispInputStream[T],
                              elm: T): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -198,7 +198,7 @@ proc internal_unreadElem*[T](stream: LispInputStream[T],
 
   return false
 
-proc internal_clearInput*[T](stream: LispInputStream[T]) =
+proc nl_clearInput*[T](stream: LispInputStream[T]) =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 

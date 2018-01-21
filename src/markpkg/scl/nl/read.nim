@@ -1,7 +1,7 @@
 import sequtils
 
 import objects
-import basic_streams
+import nl_streams
 import print
 import utf8
 
@@ -21,10 +21,10 @@ proc skip(chs: seq[LispCodepoint],
     eof: bool
 
   while true:
-    (cp, eof) = internal_readElem(s, true)
+    (cp, eof) = nl_readElem(s, true)
 
     if cp in chs:
-      discard internal_readElem(s, false)
+      discard nl_readElem(s, false)
 
     else:
       break
@@ -38,7 +38,7 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
     tail: LispList
 
   while true:
-    (cp, eof) = internal_readElem(s, true)
+    (cp, eof) = nl_readElem(s, true)
 
     if cp != ord(')'):
       let cons = makeLispObject[LispList]()
@@ -53,7 +53,7 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
       raise newException(Exception, "read error while parsing through in list")
 
     elif cp == ord(')'):
-      discard internal_readElem(s, false)
+      discard nl_readElem(s, false)
 
       if isNil(list):
         return makeLispObject[LispNull]()
@@ -72,11 +72,11 @@ proc readConstituent(s: LispCharacterInputStream): LispT =
     eof: bool
 
   while true:
-    (cp, eof) = internal_readElem(s, true)
+    (cp, eof) = nl_readElem(s, true)
 
     if eof or cp in nl_whitespace or cp in nl_terminate_macro:
       if cp in nl_whitespace:
-        discard internal_readElem(s, false)
+        discard nl_readElem(s, false)
 
       if name.len <= 0:
         return makeLispObject[LispNull]()
@@ -87,7 +87,7 @@ proc readConstituent(s: LispCharacterInputStream): LispT =
         return sym
 
     else:
-      discard internal_readElem(s, false)
+      discard nl_readElem(s, false)
       name.add(encodeCodepoint(cp))
 
 proc nl_read*(s: LispCharacterInputStream): LispT =
@@ -97,14 +97,14 @@ proc nl_read*(s: LispCharacterInputStream): LispT =
 
   skip(nl_whitespace, s)
 
-  (cp, eof) = internal_readElem(s, true)
+  (cp, eof) = nl_readElem(s, true)
 
   if eof:
     return makeLispObject[LispNull]()
 
   case cp
   of ord('('):
-    discard internal_readElem(s, false)
+    discard nl_readElem(s, false)
     return readParenthesis(s)
 
   else:
