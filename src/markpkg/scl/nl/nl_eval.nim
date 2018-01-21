@@ -12,7 +12,7 @@ proc nl_eval*(env: LispEnvironment,
 proc evalIf(env: LispEnvironment,
             args: LispList): LispT =
   var
-    pred = eval(env, args.car)
+    pred = nl_eval(env, args.car)
     rest = LispList(args.cdr)
     trueClause = rest.car
     falseCons = rest.cdr
@@ -21,9 +21,9 @@ proc evalIf(env: LispEnvironment,
     if falseCons of LispNull:
       return makeLispObject[LispNull]()
     else:
-      return eval(env, LispList(falseCons).car)
+      return nl_eval(env, LispList(falseCons).car)
   else:
-    return eval(env, trueClause)
+    return nl_eval(env, trueClause)
 
 proc evalSetq(env: LispEnvironment,
               pairs: LispList): LispT =
@@ -103,7 +103,7 @@ proc funcall(env: LispEnvironment,
   else:
     var newEnv = bindLambdaList(env, fn.lambdaList, args)
     echo repr(newEnv)
-    return eval(newEnv, fn.body)
+    return nl_eval(newEnv, fn.body)
 
 proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
