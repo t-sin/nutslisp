@@ -6,8 +6,8 @@ import print
 import data_flow
 
 
-proc eval(env: LispEnvironment,
-          obj: LispT): LispT
+proc nl_eval*(env: LispEnvironment,
+              obj: LispT): LispT
 
 proc evalIf(env: LispEnvironment,
             args: LispList): LispT =
@@ -109,8 +109,8 @@ proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
   return makeLispObject[LispNull]()
 
-proc eval(env: LispEnvironment,
-          obj: LispT): LispT =
+proc nl_eval*(env: LispEnvironment,
+              obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
 
