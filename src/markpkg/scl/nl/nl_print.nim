@@ -26,7 +26,7 @@ proc write*(obj: LispT): string =
            return write(lis.car)
         else:
           return write(lis.car) & " " & cdrstr
-          
+
     return "(" & write_list(obj) & ")"
 
   elif obj of LispCons:
