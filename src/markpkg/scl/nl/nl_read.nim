@@ -1,8 +1,5 @@
-import sequtils
-
 import objects
 import nl_streams
-import print
 import utf8
 
 
@@ -109,10 +106,3 @@ proc nl_read*(s: LispCharacterInputStream): LispT =
 
   else:
     return readConstituent(s)
-
-when isMainModule:
-  let s = makeLispCharacterInputStream(64, toSeq(decodeBytes("(a (b) c)")))
-  let sexp = nl_read(s)
-
-  echo write(sexp)
-
