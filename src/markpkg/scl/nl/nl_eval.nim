@@ -114,7 +114,7 @@ proc nl_eval*(env: LispEnvironment,
   elif (obj of LispCharacter or
         obj of LispNumber or
         obj of LispNull or
-        obj of LispArray[LispT] or
+#        obj of LispArray or
         obj of LispVector[LispT] or
         obj of LispString):
     return obj
