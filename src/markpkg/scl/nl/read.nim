@@ -54,8 +54,13 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
 
     elif cp == ord(')'):
       discard internal_readElem(s, false)
-      tail.cdr = makeLispObject[LispNull]()
-      return list
+
+      if isNil(list):
+        return makeLispObject[LispNull]()
+
+      else:
+        tail.cdr = makeLispObject[LispNull]()
+        return list
 
     else:
       tail.car = nl_read(s)
