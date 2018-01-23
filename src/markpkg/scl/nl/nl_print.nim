@@ -29,7 +29,7 @@ proc write*(obj: LispT): string =
         else:
           return write(lis.car) & " " & cdrstr
 
-    return "(" & write_list(obj) & ")"
+    return "($list)".format("list", write_list(obj))
 
   elif obj of LispFunction:
     let fn = LispFunction(obj)
@@ -42,7 +42,8 @@ proc write*(obj: LispT): string =
 
   elif obj of LispCons:
     var c = LispCons(obj)
-    return "(" & write(c.car) & " . " & write(c.cdr) & ")"
+    return "($car . $cdr)".format(
+      "car", write(c.car), "cdr", write(c.cdr))
 
   else:
     return "t"
