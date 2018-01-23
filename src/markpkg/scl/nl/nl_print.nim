@@ -1,3 +1,5 @@
+import strutils
+
 import objects
 
 proc write*(obj: LispT): string =
@@ -28,6 +30,15 @@ proc write*(obj: LispT): string =
           return write(lis.car) & " " & cdrstr
 
     return "(" & write_list(obj) & ")"
+
+  elif obj of LispFunction:
+    let fn = LispFunction(obj)
+
+    if fn.nativeP:
+      return "#<function native $id>".format("id", fn.id)
+    else:
+      return "#<function lisp (lambda $args $body)>".format(
+        "args", write(fn.lambdaList), "body", write(fn.body))
 
   elif obj of LispCons:
     var c = LispCons(obj)
