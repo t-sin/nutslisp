@@ -14,7 +14,7 @@ proc str2cp(str: string): seq[LispCodepoint] =
 
 suite "stream construction":
   test "can make input stream":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
     require(not isNil(s))
     check:
       s.direction == StreamDirectionType.sdtInput
@@ -23,21 +23,21 @@ suite "stream construction":
 
   test "zero-length buffer":
     expect Exception:
-      let s = makeLispCharacterInputStream(0)
+      let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 0)
 
     let
       str = str2cp("")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     check(false == nl_listen(s))
 
   test "negative-length buffer":
     expect Exception:
-      let s = makeLispCharacterInputStream(-1)
+      let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, -1)
 
   test "initial contents less than buffer length":
     let
       str = str2cp("abc")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     require(not isNil(s))
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -48,7 +48,7 @@ suite "stream construction":
   test "initial contents which has length of the buffer":
     let
       str = str2cp("abcd")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     require(not isNil(s))
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -60,7 +60,7 @@ suite "stream construction":
   test "initial contents more than buffer length":
     let
       str = str2cp("abcde")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     require(not isNil(s))
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -73,7 +73,7 @@ suite "stream construction":
   test "more initial contents":
     let
       str = str2cp("abcdefghi")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     require(not isNil(s))
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -89,7 +89,7 @@ suite "stream construction":
 
 suite "close Lisp streams":
   test "Lisp streams construction":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
     check:
       not isNil(s)
     check(true == nl_close(s))
@@ -98,20 +98,20 @@ suite "close Lisp streams":
     check(false == nl_close(s))
 
   test "close nil stream":
-    let s: LispCharacterInputStream = nil
+    let s: LispStream[LispCodepoint] = nil
     expect Exception:
       discard nl_close(s)
 
 suite "check if buffer is available":
   test "zero length buffer":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
     check:
       false == nl_listen(s)
 
   test "buffer length 1":
     let
       str = str2cp("a")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     check:
       true == nl_listen(s)
       (ch('a'), false) == nl_readElem(s, false)
@@ -120,7 +120,7 @@ suite "check if buffer is available":
   test "buffer array length 2":
     let
       str = str2cp("abcde")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     check:
       true == nl_listen(s)
       (ch('a'), false) == nl_readElem(s, false)
@@ -137,7 +137,7 @@ suite "check if buffer is available":
   test "simple writing":
     let
       str = str2cp("")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     check:
       false == nl_listen(s)
       true == nl_writeElem(s, ch('a'))
@@ -151,15 +151,15 @@ suite "check if buffer is available":
 
 suite "read element for nl":
   test "return EOF true and 0 when elements exists in buffer":
-    var s = makeLispCharacterInputStream(4)
+    var s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
     check((ch('\x0'), true) == nl_readElem(s, false))
 
     let str = str2cp("")
-    s = makeLispCharacterInputStream(4, str)
+    s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
     check((ch('\x0'), true) == nl_readElem(s, false))
 
   test "return EOF true and 0 when nil stream":
-    let s: LispCharacterInputStream = nil
+    let s: LispStream[LispCodepoint] = nil
     expect Exception:
       check((ch('\x0'), true) == nl_readElem(s, false))
     expect Exception:
@@ -168,7 +168,7 @@ suite "read element for nl":
   test "read initial contents":
     let
       str = str2cp("abcde")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -181,7 +181,7 @@ suite "read element for nl":
   test "read and peek initial contents":
     let
       str = str2cp("abcde")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       (ch('a'), false) == nl_readElem(s, true)
@@ -196,7 +196,7 @@ suite "read element for nl":
       (ch('\x0'), true) == nl_readElem(s, false)
 
   test "read contents that wrote":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
     discard nl_writeElem(s, ch('a'))
     discard nl_writeElem(s, ch('b'))
     discard nl_writeElem(s, ch('c'))
@@ -212,7 +212,7 @@ suite "read element for nl":
       (ch('\x0'), true) == nl_readElem(s, false)
 
   test "read and write alternately":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check((ch('\x0'), true) == nl_readElem(s, false))
 
@@ -238,7 +238,7 @@ suite "read element for nl":
 
 suite "write element for nl":
   test "write to empty stream":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check:
       true == nl_writeElem(s, ch('a'))
@@ -247,7 +247,7 @@ suite "write element for nl":
   test "write to stream which has initial contents":
     let
       str = str2cp("ab")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       true == nl_writeElem(s, ch('c'))
@@ -258,7 +258,7 @@ suite "write element for nl":
       (ch('\x0'), true) == nl_readElem(s, false)
 
   test "write over buffer array":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check:
       true == nl_writeElem(s, ch('a'))
@@ -276,19 +276,19 @@ suite "write element for nl":
 
 suite "unread element for nl":
   test "unread to empty stream":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check:
       false == nl_unreadElem(s, ch('a'))
 
   test "unread to nil":
-    let s: LispCharacterInputStream = nil
+    let s: LispStream[LispCodepoint] = nil
 
     expect Exception:
       discard nl_unreadElem(s, ch('a'))
 
   test "unread to closed stream":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     discard nl_close(s)
     check:
@@ -297,7 +297,7 @@ suite "unread element for nl":
   test "unread element with non-read stream":
     let
       str = str2cp("abc")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       false == nl_unreadElem(s, ch('a'))
@@ -305,7 +305,7 @@ suite "unread element for nl":
   test "unread element":
     let
       str = str2cp("abc")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -315,7 +315,7 @@ suite "unread element for nl":
   test "unread element repeatedly":
     let
       str = str2cp("abc")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check:
       (ch('a'), false) == nl_readElem(s, false)
@@ -339,12 +339,12 @@ suite "unread element for nl":
 
 suite "clear input":
   test "operation to nil stream":
-    let s: LispCharacterInputStream = nil
+    let s: LispStream[LispCodepoint] = nil
     expect Exception:
       nl_clearInput(s)
 
   test "operation to clear buffer":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check(false == nl_listen(s))
     nl_clearInput(s)
@@ -353,14 +353,14 @@ suite "clear input":
   test "clear initial contents":
     let
       str = str2cp("abc")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check(true == nl_listen(s))
     nl_clearInput(s)
     check(false == nl_listen(s))
 
   test "clear written contents":
-    let s = makeLispCharacterInputStream(4)
+    let s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4)
 
     check(false == nl_listen(s))
 
@@ -372,7 +372,7 @@ suite "clear input":
   test "clear contents over length of buffer":
     let
       str =str2cp("abcde")
-      s = makeLispCharacterInputStream(4, str)
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 4, str)
 
     check(true == nl_listen(s))
     nl_clearInput(s)

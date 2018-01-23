@@ -9,10 +9,10 @@ template cp(ch: untyped): untyped =
 const nl_whitespace = @[cp(' '), cp('\t'), cp('\r'), cp('\l')]
 const nl_terminate_macro = @[cp(')')]
 
-proc nl_read*(s: LispCharacterInputStream): LispT
+proc nl_read*(s: LispStream): LispT
 
 proc skip(chs: seq[LispCodepoint],
-          s: LispCharacterInputStream) =
+          s: LispStream) =
   var
     cp: LispCodepoint
     eof: bool
@@ -26,7 +26,7 @@ proc skip(chs: seq[LispCodepoint],
     else:
       break
 
-proc readParenthesis(s: LispCharacterInputStream): LispT =
+proc readParenthesis(s: LispStream): LispT =
   var
     cp: LispCodepoint
     eof: bool
@@ -62,7 +62,7 @@ proc readParenthesis(s: LispCharacterInputStream): LispT =
     else:
       tail.car = nl_read(s)
 
-proc readConstituent(s: LispCharacterInputStream): LispT =
+proc readConstituent(s: LispStream): LispT =
   var
     name = ""
     cp: LispCodepoint
@@ -87,7 +87,7 @@ proc readConstituent(s: LispCharacterInputStream): LispT =
       discard nl_readElem(s, false)
       name.add(encodeCodepoint(cp))
 
-proc nl_read*(s: LispCharacterInputStream): LispT =
+proc nl_read*(s: LispStream): LispT =
   var
     cp: LispCodepoint
     eof: bool

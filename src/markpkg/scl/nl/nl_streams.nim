@@ -26,16 +26,7 @@ type
     buffer: seq[seq[T]]
     head: StreamPos
     tail: StreamPos
-
-  LispInputStream*[T] = ref object of LispStream[T]
     unreadable: bool
-  LispCharacterInputStream* = ref object of LispInputStream[LispCodepoint]
-  LispBinaryInputStream* = ref object of LispInputStream[char]
-
-  LispOutputStream*[T] = ref object of LispStream[T]
-  LispCharacterOutputStream* = ref object of LispOutputStream[LispCodepoint]
-  LispBinaryOutputStream* = ref object of LispOutputStream[char]
-
 
 proc toBuffer[T](src: seq[T],
                  bufSize: StreamBufferIndex,
@@ -75,18 +66,20 @@ template assertPos(stream: untyped): untyped =
   assert(stream.tail.bidx >= 0)
   assert(stream.tail.bidx < stream.bufferSize)
 
-proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
-                                   str: seq[LispCodepoint] = nil): LispCharacterInputStream =
+proc makeLispStream*[T](elementType: StreamElementType,
+                        direction: StreamDirectionType,
+                        bufSize: StreamBufferIndex,
+                        str: seq[T] = nil): LispStream[T] =
   assert(bufSize > 0)
 
-  let stream = makeLispObject[LispCharacterInputStream]()
-  stream.elementType = StreamElementType.setCharacter
-  stream.direction = StreamDirectionType.sdtInput
+  let stream = makeLispObject[LispStream[T]]()
+  stream.elementType = elementType
+  stream.direction = direction
   stream.unreadable = false
   stream.bufferSize = bufSize
 
   if isNil(str):
-    stream.buffer = makeAndCopySeq[LispCodepoint](@[], bufSize)
+    stream.buffer = makeAndCopySeq[T](@[], bufSize)
     stream.head = StreamPos(aidx: 0, bidx: 0)
     stream.tail = StreamPos(aidx: 0, bidx: 0)
   else:
@@ -97,7 +90,7 @@ proc makeLispCharacterInputStream*(bufSize: StreamBufferIndex,
 
   return stream
 
-proc nl_close*[T](stream: LispInputStream[T]): bool =
+proc nl_close*[T](stream: LispStream[T]): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 
@@ -109,7 +102,7 @@ proc nl_close*[T](stream: LispInputStream[T]): bool =
     stream.tail = nil
     return true
 
-proc nl_listen*[T](stream: LispInputStream[T]): bool =
+proc nl_listen*[T](stream: LispStream[T]): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 
@@ -120,7 +113,7 @@ proc nl_listen*[T](stream: LispInputStream[T]): bool =
   else:
     return false
 
-proc nl_readElem*[T](stream: LispInputStream[T],
+proc nl_readElem*[T](stream: LispStream[T],
                            peek: bool): (T, StreamEOF) =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -145,7 +138,7 @@ proc nl_readElem*[T](stream: LispInputStream[T],
       stream.unreadable = true
     return (elem, false)
 
-proc nl_writeElem*[T](stream: LispInputStream[T],
+proc nl_writeElem*[T](stream: LispStream[T],
                             elem: T): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -175,7 +168,7 @@ proc prevPos(pos: StreamPos,
     return StreamPos(aidx: pos.aidx,
                      bidx: pos.bidx - 1)
 
-proc nl_unreadElem*[T](stream: LispInputStream[T],
+proc nl_unreadElem*[T](stream: LispStream[T],
                              elm: T): bool =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
@@ -198,7 +191,7 @@ proc nl_unreadElem*[T](stream: LispInputStream[T],
 
   return false
 
-proc nl_clearInput*[T](stream: LispInputStream[T]) =
+proc nl_clearInput*[T](stream: LispStream[T]) =
   if isNil(stream):
     raise newException(Exception, "stream is nil!")
 

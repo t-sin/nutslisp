@@ -1,5 +1,6 @@
 import sequtils
 
+import objects
 import nl_eval
 import nl_print
 import nl_read
@@ -9,13 +10,13 @@ import utf8
 
 
 proc readFrom(f: File,
-              s: LispCharacterInputStream) =
+              s: LispStream) =
   for cp in decodeBytes(f.readLine()):
     discard nl_writeElem(s, cp)
 
 proc nl_repl() =
   let
-    s = makeLispCharacterInputStream(256)
+    s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
     pkg = initPackage("nl", @[])
 
   while true:
