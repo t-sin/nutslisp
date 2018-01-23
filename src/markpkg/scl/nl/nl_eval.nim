@@ -5,13 +5,15 @@ import nl_runtime
 import nl_pure
 
 
-proc nl_eval*(env: LispEnvironment,
-              obj: LispT): LispT
+proc eval*(rt: LispRuntime,
+           env: LispEnvironment,
+           obj: LispT): LispT
 
-proc evalIf(env: LispEnvironment,
+proc evalIf(rt: LispRuntime,
+            env: LispEnvironment,
             args: LispList): LispT =
   var
-    pred = nl_eval(env, args.car)
+    pred = eval(rt, env, args.car)
     rest = LispList(args.cdr)
     trueClause = rest.car
     falseCons = rest.cdr
@@ -20,11 +22,12 @@ proc evalIf(env: LispEnvironment,
     if falseCons of LispNull:
       return makeLispObject[LispNull]()
     else:
-      return nl_eval(env, LispList(falseCons).car)
+      return eval(rt, env, LispList(falseCons).car)
   else:
-    return nl_eval(env, trueClause)
+    return eval(rt, env, trueClause)
 
-proc evalSetq(env: LispEnvironment,
+proc evalSetq(rt: LispRuntime,
+              env: LispEnvironment,
               pairs: LispList): LispT =
   if pairs.cdr of LispNull:
     raise newException(Exception, "invalid setq")
@@ -38,9 +41,10 @@ proc evalSetq(env: LispEnvironment,
     if rest.cdr of LispNull:
       return val
     else:
-      return evalSetq(env, LispList(rest.cdr))
+      return evalSetq(rt, env, LispList(rest.cdr))
 
-proc evalLambdaExp(env: LispEnvironment,
+proc evalLambdaExp(rt: LispRuntime,
+                   env: LispEnvironment,
                    args: LispList): LispFunction =
   var
     fn = makeLispObject[LispFunction]()
@@ -51,7 +55,8 @@ proc evalLambdaExp(env: LispEnvironment,
   fn.body = args.cdr
   return fn
 
-proc bindLambdaList(env: LispEnvironment,
+proc bindLambdaList(rt: LispRuntime,
+                    env: LispEnvironment,
                     lambdaList: LispList,
                     args: LispList,
                     newEnv: LispEnvironment = nil): LispEnvironment =
@@ -77,7 +82,7 @@ proc bindLambdaList(env: LispEnvironment,
       raise newException(Exception, "invalid lambda list")
     else:
       newEnv.binding[lambda_cdr.car.id].value = args_cdr.car
-      return bindLambdaList(env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
+      return bindLambdaList(rt, env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
 
 proc list2seq(list: LispList): seq[LispT] =
   if list of LispNull:
@@ -91,23 +96,25 @@ proc list2seq(list: LispList): seq[LispT] =
     rest.add(list.car)
     return rest
 
-proc funcall(env: LispEnvironment,
+proc funcall(rt: LispRuntime,
+             env: LispEnvironment,
              fn: LispFunction,
              args: LispList): LispT =
   if fn.nativeP:
-    return fn.nativeBody(list2seq(args))
+    return fn.nativeBody(rt, list2seq(args))
 
   else:
-    var newEnv = bindLambdaList(env, fn.lambdaList, args)
+    var newEnv = bindLambdaList(rt, env, fn.lambdaList, args)
     echo repr(newEnv)
-    return nl_eval(newEnv, fn.body)
+    return eval(rt, newEnv, fn.body)
 
 proc hello_fn(args: varargs[LispT]): LispT =
   echo "first your function!!"
   return makeLispObject[LispNull]()
 
-proc nl_eval*(env: LispEnvironment,
-              obj: LispT): LispT =
+proc eval*(rt: LispRuntime,
+           env: LispEnvironment,
+           obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
 
@@ -145,18 +152,18 @@ proc nl_eval*(env: LispEnvironment,
       return op.function
 
     if op.name == "setq":
-      return evalSetq(env, args)
+      return evalSetq(rt, env, args)
 
     if op.name == "if":
-      return evalIf(env, args)
+      return evalIf(rt, env, args)
 
     if op.name == "lambda":
-      return evalLambdaExp(env, args)
+      return evalLambdaExp(rt, env, args)
 
     else:
       # var newEnv = bindLambdaList(env, args)
       var fn = op.function
-      return funcall(env, fn, args)
+      return funcall(rt, env, fn, args)
 
   else:
     return obj
