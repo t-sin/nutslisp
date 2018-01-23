@@ -50,21 +50,3 @@ proc lisp_intern*(rt: LispRuntime,
     return intern(name, rt.currentPackage)[0]
   else:
     return intern(name, pkg)[0]
-
-
-proc initKeywordPackage*(rt: LispRuntime): LispPackage =
-  var
-    pkgName = "keyword"
-    pkg = initPackage(pkgName, @[])
-
-  rt.packageTable[pkgName] = pkg
-  return pkg
-
-proc initNlCorePackage*(rt: LispRuntime): LispPackage =
-  var
-    pkgName = "nl"
-    pkg = initPackage(pkgName, @[])
-
-  rt.packageTable[pkgName] = pkg
-
-  return pkg
