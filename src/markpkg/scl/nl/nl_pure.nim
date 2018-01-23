@@ -30,7 +30,7 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   returnStmt.add(eqexp)
   result.add(returnStmt)
 
-proc nl_eq*(obj1: LispT, obj2: LispT): bool =
+proc eq*(obj1: LispT, obj2: LispT): bool =
   if objAreTyped(LispNull):
     eqReturn(LispNull, true)
 
