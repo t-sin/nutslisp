@@ -2,7 +2,7 @@ import tables
 
 import objects
 import nl_runtime
-import data_flow
+import nl_pure
 
 
 proc nl_eval*(env: LispEnvironment,

@@ -30,17 +30,35 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   returnStmt.add(eqexp)
   result.add(returnStmt)
 
-proc eq*(obj1: LispT, obj2: LispT): bool =
+proc nl_eq*(obj1: LispT, obj2: LispT): bool =
   if objAreTyped(LispNull):
     eqReturn(LispNull, true)
 
   else:
     return obj1.id == obj2.id
 
-proc lisp_eq*(obj1: LispT, obj2: LispT): LispT =
+proc nl_eq*(rt: LispRuntime,
+              obj1: LispT, obj2: LispT): LispT =
   var b = eq(obj1, obj2)
   if b:
     return makeLispObject[LispT]()
   else:
     return makeLispObject[LispNull]()
 
+proc atom*(obj: LispT): bool =
+  if obj of LispCons:
+    return false
+  else:
+    return true
+
+proc nl_atom*(rt: LispRuntime, obj: LispT): LispT =
+  nil
+
+proc nl_car*(rt: LispRuntime, c: LispCons): LispT =
+  return c.car
+
+proc nl_cdr*(rt: LispRuntime, c: LispCons): LispT =
+  return c.cdr
+
+proc nl_cons*(rt: LispRuntime, obj1: LispT, obj2: LispT): LispT =
+  return LispCons(car: obj1, cdr: obj2)
