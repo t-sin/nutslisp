@@ -56,9 +56,8 @@ proc initNlRuntime*(): LispRuntime =
   return rt
 
 
-proc readFrom(f: File,
-              s: LispStream) =
-  for cp in decodeBytes(f.readLine()):
+proc readFromStdin(s: LispStream) =
+  for cp in decodeBytes(stdin.readLine()):
     discard nl_writeElem(s, cp)
 
 proc nl_repl() =
@@ -68,7 +67,7 @@ proc nl_repl() =
 
   while true:
     write(stdout, rt.currentPackage.name & "> ")
-    readFrom(stdin, s)
+    readFromStdin(s)
     stdout.writeLine(write(eval(
       rt, rt.currentPackage.environment, nl_read(rt, s))))
 
