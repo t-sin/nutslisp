@@ -1,5 +1,6 @@
 import objects
 import nl_streams
+import nl_runtime
 import utf8
 
 
@@ -82,9 +83,7 @@ proc readConstituent(rt: LispRuntime,
         return makeLispObject[LispNull]()
 
       else:
-        let sym = makeLispObject[LispSymbol]()
-        sym.name = name
-        return sym
+        return intern(name, rt.currentPackage)[0]
 
     else:
       discard nl_readElem(s, false)
