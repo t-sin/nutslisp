@@ -19,13 +19,13 @@ proc nl_repl() =
   let
     s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
     rt = initRuntime()
-    pkg = initPackage("nl", @[])
+    corePkg = initNlCorePackage(rt)
 
-  rt.packageTable["nl"] = pkg
-  rt.currentPackage = pkg
+  rt.currentPackage = corePkg
+  discard initKeywordPackage(rt)
 
   while true:
-    write(stdout, "nl> ")
+    write(stdout, rt.currentPackage.name & "> ")
     readFrom(stdin, s)
     stdout.writeLine(write(nl_eval(
       rt.currentPackage.environment, nl_read(rt, s))))
