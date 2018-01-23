@@ -139,7 +139,7 @@ proc nl_eval*(env: LispEnvironment,
       args = LispList(c.cdr)
 
     if op.name == "quote":
-      return c
+      return args.car
 
     if op.name == "function":
       return op.function
