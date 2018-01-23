@@ -31,17 +31,16 @@ proc getPackage(rt: LispRuntime,
   else:
     return nil
 
-proc intern(name: string,
+proc intern*(name: string,
             package: LispPackage): (LispSymbol, string) =
   for v in package.environment.binding.values:
     if v.name == name:
       return (v, "existed")
 
-    else:
-      let s = makeLispObject[LispSymbol]()
-      s.name = name
-      package.environment.binding[s.id] = s
-      return (s, "created")
+  let s = makeLispObject[LispSymbol]()
+  s.name = name
+  package.environment.binding[s.id] = s
+  return (s, "created")
 
 proc lisp_intern*(rt: LispRuntime,
                   name: string,
