@@ -53,7 +53,7 @@ type
     lambdaList*: LispList
     nativeP*: bool
     body*: LispT
-    nativeBody*: proc (args: varargs[LispT]): LispT
+    nativeBody*: proc (rt: LispRuntime, args: varargs[LispT]): LispT
 
 
   LispPackage* = ref object of LispT
@@ -98,7 +98,6 @@ type
   LispCondition* = ref object of Exception
 
 
-type
   LispRuntime* = ref object of RootObj
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
