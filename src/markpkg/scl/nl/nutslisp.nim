@@ -32,10 +32,21 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn = makeLispObject[LispFunction]()
   fn.nativeP = true
   fn.nativeBody = nl_eq
+  s.function = fn
 
   rt.packageTable[pkgName] = pkg
 
   return pkg
+
+proc initNlRuntime*(): LispRuntime =
+  let
+    rt = initRuntime()
+    corePkg = initNlCorePackage(rt)
+
+  rt.currentPackage = corePkg
+  discard initKeywordPackage(rt)
+
+  return rt
 
 
 proc readFrom(f: File,
@@ -46,11 +57,7 @@ proc readFrom(f: File,
 proc nl_repl() =
   let
     s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
-    rt = initRuntime()
-    corePkg = initNlCorePackage(rt)
-
-  rt.currentPackage = corePkg
-  discard initKeywordPackage(rt)
+    rt = initNlRuntime()
 
   while true:
     write(stdout, rt.currentPackage.name & "> ")
