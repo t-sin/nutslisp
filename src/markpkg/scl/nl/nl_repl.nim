@@ -1,4 +1,5 @@
 import sequtils
+import tables
 
 import objects
 import nl_eval
@@ -17,13 +18,17 @@ proc readFrom(f: File,
 proc nl_repl() =
   let
     s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
+    rt = initRuntime()
     pkg = initPackage("nl", @[])
+
+  rt.packageTable["nl"] = pkg
+  rt.currentPackage = pkg
 
   while true:
     write(stdout, "nl> ")
     readFrom(stdin, s)
     stdout.writeLine(write(nl_eval(
-      pkg.environment, nl_read(s))))
+      rt.currentPackage.environment, nl_read(rt, s))))
 
 when isMainModule:
   nl_repl()

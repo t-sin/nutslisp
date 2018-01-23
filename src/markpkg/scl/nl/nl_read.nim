@@ -9,7 +9,8 @@ template cp(ch: untyped): untyped =
 const nl_whitespace = @[cp(' '), cp('\t'), cp('\r'), cp('\l')]
 const nl_terminate_macro = @[cp(')')]
 
-proc nl_read*(s: LispStream): LispT
+proc nl_read*(rt: LispRuntime,
+              s: LispStream[LispCodepoint]): LispT
 
 proc skip(chs: seq[LispCodepoint],
           s: LispStream) =
@@ -26,7 +27,8 @@ proc skip(chs: seq[LispCodepoint],
     else:
       break
 
-proc readParenthesis(s: LispStream): LispT =
+proc readParenthesis(rt: LispRuntime,
+                     s: LispStream[LispCodepoint]): LispT =
   var
     cp: LispCodepoint
     eof: bool
@@ -60,9 +62,10 @@ proc readParenthesis(s: LispStream): LispT =
         return list
 
     else:
-      tail.car = nl_read(s)
+      tail.car = nl_read(rt, s)
 
-proc readConstituent(s: LispStream): LispT =
+proc readConstituent(rt: LispRuntime,
+                     s: LispStream[LispCodepoint]): LispT =
   var
     name = ""
     cp: LispCodepoint
@@ -87,7 +90,8 @@ proc readConstituent(s: LispStream): LispT =
       discard nl_readElem(s, false)
       name.add(encodeCodepoint(cp))
 
-proc nl_read*(s: LispStream): LispT =
+proc nl_read*(rt: LispRuntime,
+              s: LispStream[LispCodepoint]): LispT =
   var
     cp: LispCodepoint
     eof: bool
@@ -102,7 +106,7 @@ proc nl_read*(s: LispStream): LispT =
   case cp
   of ord('('):
     discard nl_readElem(s, false)
-    return readParenthesis(s)
+    return readParenthesis(rt, s)
 
   else:
-    return readConstituent(s)
+    return readConstituent(rt, s)
