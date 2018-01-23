@@ -76,7 +76,7 @@ proc bindLambdaList(env: LispEnvironment,
     if not (lambda_cdr.car of LispSymbol):
       raise newException(Exception, "invalid lambda list")
     else:
-      newEnv.binding[lambda_cdr.car.id] = args_cdr.car
+      newEnv.binding[lambda_cdr.car.id].value = args_cdr.car
       return bindLambdaList(env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
 
 proc list2seq(list: LispList): seq[LispT] =

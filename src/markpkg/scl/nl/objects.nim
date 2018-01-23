@@ -63,7 +63,7 @@ type
 
   LispEnvironment* = ref object of LispT
     parent*: LispEnvironment
-    binding*: TableRef[LispObjectId, LispT]
+    binding*: TableRef[LispObjectId, LispSymbol]
 
 
   SyntaxType* = enum

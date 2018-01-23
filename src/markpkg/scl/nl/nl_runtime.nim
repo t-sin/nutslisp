@@ -5,7 +5,7 @@ import objects
 
 proc initEnvironment*(): LispEnvironment =
   var env = makeLispObject[LispEnvironment]()
-  env.binding = newTable[LispObjectId, LispT]()
+  env.binding = newTable[LispObjectId, LispSymbol]()
   return env
 
 proc initPackage*(name: string,
