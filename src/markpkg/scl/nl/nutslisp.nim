@@ -60,7 +60,7 @@ proc readFromStdin(s: LispStream) =
   for cp in decodeBytes(stdin.readLine()):
     discard nl_writeElem(s, cp)
 
-proc nl_repl() =
+proc nl_repl*() =
   let
     s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
     rt = initNlRuntime()
