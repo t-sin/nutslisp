@@ -32,7 +32,7 @@ macro defNativeFun(name: untyped): untyped =
 
 proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   var
-    pkgName = "nl"
+    pkgName = "nuts-lisp"
     pkg = initPackage(pkgName, @[])
 
   var
