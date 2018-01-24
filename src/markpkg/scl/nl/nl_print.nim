@@ -8,6 +8,10 @@ proc write*(obj: LispT): string =
   if obj of LispNull:
     return "nil"
 
+  if obj of LispInteger:
+    let ival = LispInteger(obj)
+    return $(ival.value)
+
   elif obj of LispCharacter:
     let ch = LispCharacter(obj)
     return $(chr(ch.codepoint))
