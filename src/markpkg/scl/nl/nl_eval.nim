@@ -157,8 +157,7 @@ proc eval*(rt: LispRuntime,
       return evalLambdaExp(rt, env, args)
 
     else:
-      # var newEnv = bindLambdaList(env, args)
-      var fn = op.function
+      let fn = op.function
       return funcall(rt, env, fn, args)
 
   else:
