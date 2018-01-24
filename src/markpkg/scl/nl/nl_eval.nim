@@ -108,10 +108,6 @@ proc funcall(rt: LispRuntime,
     echo repr(newEnv)
     return eval(rt, newEnv, fn.body)
 
-proc hello_fn(args: varargs[LispT]): LispT =
-  echo "first your function!!"
-  return makeLispObject[LispNull]()
-
 proc eval*(rt: LispRuntime,
            env: LispEnvironment,
            obj: LispT): LispT =
