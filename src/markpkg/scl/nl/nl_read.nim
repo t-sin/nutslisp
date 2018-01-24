@@ -1,3 +1,5 @@
+import strutils
+
 import objects
 import nl_streams
 import nl_runtime
@@ -9,6 +11,8 @@ template cp(ch: untyped): untyped =
 
 const nl_whitespace = @[cp(' '), cp('\t'), cp('\r'), cp('\l')]
 const nl_terminate_macro = @[cp(')')]
+const nl_number = @[cp('0'), cp('1'), cp('2'), cp('3'), cp('4'),
+                    cp('5'), cp('6'), cp('7'), cp('8'), cp('9')]
 
 proc nl_read*(rt: LispRuntime,
               s: LispStream[LispCodepoint]): LispT
@@ -113,6 +117,32 @@ proc readSymbol(rt: LispRuntime,
       discard nl_readElem(s, false)
       name.add(encodeCodepoint(cp))
 
+proc readNumber(rt: LispRuntime,
+                s: LispStream[LispCodepoint]): LispT =
+  var
+    valueStr = ""
+    cp: LispCodepoint
+    eof: bool
+
+  while true:
+    (cp, eof) = nl_readElem(s, true)
+
+    if cp in nl_number:
+      discard nl_readElem(s, false)
+      valueStr.add(chr(cp))
+
+    elif eof or cp in nl_whitespace or cp in nl_terminate_macro:
+      if cp in nl_whitespace:
+        discard nl_readElem(s, false)
+
+      assert(valueStr.len > 0)
+      let v = makeLispObject[LispInteger]()
+      v.value = parseInt(valueStr)
+      return v
+
+    else:
+      raise newException(Exception, "read error when reading number: invalid integer")
+
 proc nl_read*(rt: LispRuntime,
               s: LispStream[LispCodepoint]): LispT =
   var
@@ -125,6 +155,9 @@ proc nl_read*(rt: LispRuntime,
 
   if eof:
     return makeLispObject[LispNull]()
+
+  elif cp in nl_number:
+    return readNumber(rt, s)
 
   case cp
   of ord('('):

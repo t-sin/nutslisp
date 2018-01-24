@@ -41,7 +41,7 @@ type
 
   LispNumber* = ref object of LispT
   LispInteger* = ref object of LispNumber
-    value*: int32
+    value*: int
 
 
   LispArrayBase*[T] = ref object of LispT
