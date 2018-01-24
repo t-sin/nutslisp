@@ -12,6 +12,25 @@ proc write*(obj: LispT): string =
     let ch = LispCharacter(obj)
     return $(chr(ch.codepoint))
 
+  elif obj of LispVector[LispT]:
+    let vec = LispVector[LispT](obj)
+    var s = "("
+
+    for elm in vec.content:
+      s.add(write(elm))
+      s.add(" ")
+
+    s[s.len - 1] = ')'
+
+  elif obj of LispString:
+    let str = LispString(obj)
+    var s = ""
+
+    for ch in str.content:
+      s.add(chr(ch.codepoint))
+
+    return s
+
   elif obj of LispSymbol:
     let s = obj.LispSymbol
     return s.name
