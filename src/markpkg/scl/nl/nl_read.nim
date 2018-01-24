@@ -65,6 +65,30 @@ proc readParenthesis(rt: LispRuntime,
     else:
       tail.car = nl_read(rt, s)
 
+proc readDoubleQuote(rt: LispRuntime,
+                     s: LispStream[LispCodepoint]): LispT =
+    var
+      cp: LispCodepoint
+      eof: bool
+      str = makeLispObject[LispString]()
+
+    str.content = @[]
+
+    while true:
+      (cp, eof) = nl_readElem(s, true)
+
+      if eof:
+        raise newException(Exception, "read error while parsing through string")
+
+      elif cp == ord('"'):
+        return str
+
+      else:
+        discard nl_readElem(s, false)
+        let ch = makeLispObject[LispCharacter]()
+        ch.codepoint = cp
+        str.content.add(ch)
+
 proc readConstituent(rt: LispRuntime,
                      s: LispStream[LispCodepoint]): LispT =
   var
@@ -106,6 +130,10 @@ proc nl_read*(rt: LispRuntime,
   of ord('('):
     discard nl_readElem(s, false)
     return readParenthesis(rt, s)
+
+  of ord('"'):
+    discard nl_readElem(s, false)
+    return readDoubleQuote(rt, s)
 
   else:
     return readConstituent(rt, s)
