@@ -43,7 +43,7 @@ type
 
 
   LispArrayBase*[T] = ref object of LispT
-    content: seq[T]
+    content*: seq[T]
   LispArray* = LispArrayBase[LispArray]
   LispVector*[T] = LispArrayBase[T]
   LispString* = LispVector[LispCharacter]
