@@ -28,8 +28,8 @@ proc skip(chs: seq[LispCodepoint],
     else:
       break
 
-proc readParenthesis(rt: LispRuntime,
-                     s: LispStream[LispCodepoint]): LispT =
+proc readList(rt: LispRuntime,
+              s: LispStream[LispCodepoint]): LispT =
   var
     cp: LispCodepoint
     eof: bool
@@ -65,8 +65,8 @@ proc readParenthesis(rt: LispRuntime,
     else:
       tail.car = nl_read(rt, s)
 
-proc readDoubleQuote(rt: LispRuntime,
-                     s: LispStream[LispCodepoint]): LispT =
+proc readString(rt: LispRuntime,
+                s: LispStream[LispCodepoint]): LispT =
     var
       cp: LispCodepoint
       eof: bool
@@ -89,8 +89,8 @@ proc readDoubleQuote(rt: LispRuntime,
         ch.codepoint = cp
         str.content.add(ch)
 
-proc readConstituent(rt: LispRuntime,
-                     s: LispStream[LispCodepoint]): LispT =
+proc readSymbol(rt: LispRuntime,
+                s: LispStream[LispCodepoint]): LispT =
   var
     name = ""
     cp: LispCodepoint
@@ -129,11 +129,11 @@ proc nl_read*(rt: LispRuntime,
   case cp
   of ord('('):
     discard nl_readElem(s, false)
-    return readParenthesis(rt, s)
+    return readList(rt, s)
 
   of ord('"'):
     discard nl_readElem(s, false)
-    return readDoubleQuote(rt, s)
+    return readString(rt, s)
 
   else:
-    return readConstituent(rt, s)
+    return readSymbol(rt, s)

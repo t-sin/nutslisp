@@ -40,6 +40,8 @@ type
     codepoint*: LispCodepoint
 
   LispNumber* = ref object of LispT
+  LispInteger* = ref object of LispNumber
+    value*: int32
 
 
   LispArrayBase*[T] = ref object of LispT
