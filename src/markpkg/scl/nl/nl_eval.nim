@@ -135,7 +135,7 @@ proc eval*(rt: LispRuntime,
       else:
         return s.value
     elif tables.hasKey(env.binding, s.id):
-      return LispSymbol(env.binding[s.id]).value
+      return env.binding[s.id].value
     else:
       raise newException(Exception, "unbound-variable")
 
