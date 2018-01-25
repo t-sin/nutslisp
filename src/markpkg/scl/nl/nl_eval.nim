@@ -96,12 +96,28 @@ proc list2seq(list: LispList): seq[LispT] =
     rest.add(list.car)
     return rest
 
+proc evalArgs(rt: LispRuntime,
+              env: LispEnvironment,
+              args: LispList): LispList =
+  let
+    val = eval(rt, env, args.car)
+    cdr = LispList(args.cdr)
+    cons = makeLispObject[LispList]()
+
+  cons.car = val
+  if cdr of LispNull:
+    cons.cdr = makeLispObject[LispNull]()
+  else:
+    cons.cdr = evalArgs(rt, env, cdr)
+
+  return cons
+
 proc funcall(rt: LispRuntime,
              env: LispEnvironment,
              fn: LispFunction,
              args: LispList): LispT =
   if fn.nativeP:
-    return fn.nativeBody(rt, list2seq(args))
+    return fn.nativeBody(rt, evalArgs(rt, env, args))
 
   else:
     var newEnv = bindLambdaList(rt, env, fn.lambdaList, args)
