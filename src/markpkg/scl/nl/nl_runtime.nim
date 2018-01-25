@@ -39,6 +39,7 @@ proc intern*(name: string,
 
   let s = makeLispObject[LispSymbol]()
   s.name = name
+  s.package = package
   package.environment.binding[s.id] = s
   return (s, "created")
 
