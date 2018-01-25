@@ -38,8 +38,15 @@ proc eq*(obj1: LispT, obj2: LispT): bool =
     return obj1.id == obj2.id
 
 proc nl_eq*(rt: LispRuntime,
-            args: varargs[LispT]): LispT =
-  return makeLispObject[LispNull]()
+            args: LispList): LispT =
+  let
+    a = args.car
+    b = LispList(args.cdr).car
+
+  if eq(a, b):
+    return makeLispObject[LispT]()
+  else:
+    return makeLispObject[LispNull]()
 
 proc atom*(obj: LispT): bool =
   if obj of LispCons:
