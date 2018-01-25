@@ -55,7 +55,7 @@ type
     lambdaList*: LispList
     nativeP*: bool
     body*: LispT
-    nativeBody*: proc (rt: LispRuntime, args: varargs[LispT]): LispT
+    nativeBody*: proc (rt: LispRuntime, args: LispList): LispT
 
 
   LispPackage* = ref object of LispT
