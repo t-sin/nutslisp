@@ -32,7 +32,7 @@ proc getPackage(rt: LispRuntime,
     return nil
 
 proc intern*(name: string,
-            package: LispPackage): (LispSymbol, string) =
+             package: LispPackage): (LispSymbol, string) =
   for v in package.environment.binding.values:
     if v.name == name:
       return (v, "existed")
