@@ -111,7 +111,14 @@ proc readSymbol(rt: LispRuntime,
         return makeLispObject[LispNull]()
 
       else:
-        return intern(name, rt.currentPackage)[0]
+        if name == "t":
+          return makeLispObject[LispT]()
+
+        if name == "nil":
+          return makeLispObject[LispNull]()
+
+        else:
+          return intern(name, rt.currentPackage)[0]
 
     else:
       discard nl_readElem(s, false)
