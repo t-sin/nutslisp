@@ -14,3 +14,7 @@ requires "nim >= 0.17.2"
 task test, "Run the mark and SCL tests":
   withDir "tests":
     exec "nim c -r tester"
+
+task mark, "Run the mark":
+  withDir "src":
+    exec "nim c -r mark"
