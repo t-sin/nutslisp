@@ -1,10 +1,17 @@
 import tables
 
 
-type
-  LispObjectId* = uint32
-  LispT* = ref object of RootObj
-    id*: LispObjectId
+when not defined(javascript):
+  type
+    LispObjectId* = uint32
+    LispT* = ref object of RootObj
+      id*: LispObjectId
+
+when defined(javascript):
+  type
+    LispObjectId* = int32
+    LispT* = ref object of RootObj
+      id*: LispObjectId
 
 var lispObjectCount*: LispObjectId = 0
 
