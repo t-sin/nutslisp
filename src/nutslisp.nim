@@ -120,8 +120,17 @@ when not defined(javascript):
     nl_repl()
 
 when defined(javascript):
-  proc readFromString*(str: string): string {.exportc.} =
+  var rt = initNlRuntime()
+
+  proc readFromString*(str: cstring): cstring {.exportc.} =
     let stream = makeLispStream[LispCodepoint](
       setCharacter, sdtInput,
-      256, toSeq(decodeBytes(str)))
-    write(nl_read(initNlRuntime(), stream))
+      256, toSeq(decodeBytes($(str))))
+
+    try:
+      result = write(eval(
+        rt, rt.currentPackage.environment, nl_read(rt, stream)))
+
+    except Exception:
+      let msg = getCurrentExceptionMsg()
+      result = "\nGot exception with message '$msg'".format(["msg", msg])
