@@ -3,14 +3,14 @@ import sequtils
 import strutils
 import tables
 
-import objects
-import nl_eval
-import nl_print
-import nl_pure
-import nl_read
-import nl_runtime
-import nl_streams
-import utf8
+import nutslisppkg.objects
+import nutslisppkg.nl_eval
+import nutslisppkg.nl_print
+import nutslisppkg.nl_pure
+import nutslisppkg.nl_read
+import nutslisppkg.nl_runtime
+import nutslisppkg.nl_streams
+import nutslisppkg.utf8
 
 
 proc initKeywordPackage*(rt: LispRuntime): LispPackage =
