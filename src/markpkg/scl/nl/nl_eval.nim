@@ -35,7 +35,7 @@ proc evalSetq(rt: LispRuntime,
     var
       rest = LispList(pairs.cdr)
       sym = LispSymbol(pairs.car)
-      val = rest.car
+      val = eval(rt, env, rest.car)
 
     sym.value = val
     if rest.cdr of LispNull:
