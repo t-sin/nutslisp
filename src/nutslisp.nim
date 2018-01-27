@@ -97,5 +97,11 @@ proc nl_repl*() =
     stdout.writeLine(write(eval(
       rt, rt.currentPackage.environment, nl_read(rt, s))))
 
+let nutslisp_logo = """
+ ⣀⡀ ⡀⢀ ⣰⡀ ⢀⣀   ⡇ ⠄ ⢀⣀ ⣀⡀
+ ⠇⠸ ⠣⠼ ⠘⠤ ⠭⠕   ⠣ ⠇ ⠭⠕ ⡧⠜
+"""
+
 when isMainModule:
+  echo nutslisp_logo
   nl_repl()
