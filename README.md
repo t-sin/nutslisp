@@ -2,6 +2,7 @@
 
 For Mark the squirrel.
 
+
 ## Install
 
 ```
@@ -10,6 +11,17 @@ $ cd nutslisp/
 $ nimble build
 $ ./nutslisp
 ```
+
+## Invoking nutslisp from JavaScript
+
+First, you must compile nutslisp into JavaScript code.
+
+```
+$ nimble js -o:nutslisp.js src/nutslisp.nim
+```
+
+And call `readFromString("(quote blah blah"))` from HTML file.
+
 
 ## License
 
