@@ -46,6 +46,27 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.nativeBody = nl_atom
   s.function = fn
 
+  s = intern("car", rt.currentPackage)[0]
+  fn = makeLispObject[LispFunction]()
+  fn.lambdaList = nil
+  fn.nativeP = true
+  fn.nativeBody = nl_car
+  s.function = fn
+
+  s = intern("cdr", rt.currentPackage)[0]
+  fn = makeLispObject[LispFunction]()
+  fn.lambdaList = nil
+  fn.nativeP = true
+  fn.nativeBody = nl_cdr
+  s.function = fn
+
+  s = intern("cons", rt.currentPackage)[0]
+  fn = makeLispObject[LispFunction]()
+  fn.lambdaList = nil
+  fn.nativeP = true
+  fn.nativeBody = nl_cons
+  s.function = fn
+
   rt.packageTable[pkgName] = pkg
 
   return pkg
