@@ -161,7 +161,7 @@ proc eval*(rt: LispRuntime,
       return args.car
 
     if op.name == "function":
-      return op.function
+      return LispSymbol(args.car).function
 
     if op.name == "setq":
       return evalSetq(rt, env, args)
