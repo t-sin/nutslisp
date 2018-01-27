@@ -82,38 +82,46 @@ proc initNlRuntime*(): LispRuntime =
   return rt
 
 
-proc readFromStdin(s: LispStream) =
-  for cp in decodeBytes(stdin.readLine()):
-    discard nl_writeElem(s, cp)
-
-proc nl_repl*() =
-  let
-    s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
-    rt = initNlRuntime()
-
-  while true:
-    write(stdout, rt.currentPackage.name & "> ")
-
-    try:
-      readFromStdin(s)
-    except Exception:
-      echo "\nquit by user."
-      quit(0)
-
-    try:
-      stdout.writeLine(write(eval(
-        rt, rt.currentPackage.environment, nl_read(rt, s))))
-    except Exception:
-      let
-        msg = getCurrentExceptionMsg()
-
-      echo "\nGot exception with message '$msg'".format(["msg", msg])
-
-let nutslisp_logo = """
+let nutslisp_logo* = """
  ⣀⡀ ⡀⢀ ⣰⡀ ⢀⣀   ⡇ ⠄ ⢀⣀ ⣀⡀
  ⠇⠸ ⠣⠼ ⠘⠤ ⠭⠕   ⠣ ⠇ ⠭⠕ ⡧⠜
 """
 
-when isMainModule:
-  echo nutslisp_logo
-  nl_repl()
+when not defined(javascript):
+  proc readFromStdin(s: LispStream) =
+    for cp in decodeBytes(stdin.readLine()):
+      discard nl_writeElem(s, cp)
+
+  proc nl_repl*() =
+    let
+      s = makeLispStream[LispCodepoint](setCharacter, sdtInput, 256)
+      rt = initNlRuntime()
+
+    while true:
+      write(stdout, rt.currentPackage.name & "> ")
+
+      try:
+        readFromStdin(s)
+      except Exception:
+        echo "\nquit by user."
+        quit(0)
+
+      try:
+        stdout.writeLine(write(eval(
+          rt, rt.currentPackage.environment, nl_read(rt, s))))
+      except Exception:
+        let
+          msg = getCurrentExceptionMsg()
+
+        echo "\nGot exception with message '$msg'".format(["msg", msg])
+
+  when isMainModule:
+    echo nutslisp_logo
+    nl_repl()
+
+when defined(javascript):
+  proc readFromString*(str: string): string {.exportc.} =
+    let stream = makeLispStream[LispCodepoint](
+      setCharacter, sdtInput,
+      256, toSeq(decodeBytes(str)))
+    write(nl_read(initNlRuntime(), stream))
