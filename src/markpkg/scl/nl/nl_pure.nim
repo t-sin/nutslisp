@@ -64,11 +64,29 @@ proc nl_atom*(rt: LispRuntime, args: LispList): LispT =
   else:
     return makeLispObject[LispNull]()
 
-proc nl_car*(rt: LispRuntime, c: LispCons): LispT =
-  return c.car
+proc car*(cons: LispCons): LispT =
+  return cons.car
 
-proc nl_cdr*(rt: LispRuntime, c: LispCons): LispT =
-  return c.cdr
+proc nl_car*(rt: LispRuntime, args: LispList): LispT =
+  let a = LispCons(args.car)
+  return car(a)
 
-proc nl_cons*(rt: LispRuntime, obj1: LispT, obj2: LispT): LispT =
-  return LispCons(car: obj1, cdr: obj2)
+proc cdr*(cons: LispCons): LispT =
+  return cons.cdr
+
+proc nl_cdr*(rt: LispRuntime, args: LispList): LispT =
+  let a = LispCons(args.car)
+  return cdr(a)
+
+proc cons*(obj1: LispT, obj2: LispT): LispCons =
+  let cons = makeLispObject[LispCons]()
+  cons.car = obj1
+  cons.cdr = obj2
+  return cons
+
+proc nl_cons*(rt: LispRuntime, args: LispList): LispT =
+  let
+    a = args.car
+    b = LispList(args.cdr).car
+
+  return cons(a, b)
