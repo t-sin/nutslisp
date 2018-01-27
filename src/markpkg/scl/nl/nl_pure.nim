@@ -51,11 +51,18 @@ proc nl_eq*(rt: LispRuntime,
 proc atom*(obj: LispT): bool =
   if obj of LispCons:
     return false
+  elif obj of LispNull:
+    return false
   else:
     return true
 
-proc nl_atom*(rt: LispRuntime, obj: LispT): LispT =
-  nil
+proc nl_atom*(rt: LispRuntime, args: LispList): LispT =
+  let a = args.car
+
+  if atom(a):
+    return makeLispObject[LispT]()
+  else:
+    return makeLispObject[LispNull]()
 
 proc nl_car*(rt: LispRuntime, c: LispCons): LispT =
   return c.car
