@@ -93,9 +93,21 @@ proc nl_repl*() =
 
   while true:
     write(stdout, rt.currentPackage.name & "> ")
-    readFromStdin(s)
-    stdout.writeLine(write(eval(
-      rt, rt.currentPackage.environment, nl_read(rt, s))))
+
+    try:
+      readFromStdin(s)
+    except Exception:
+      echo "\nquit by user."
+      quit(0)
+
+    try:
+      stdout.writeLine(write(eval(
+        rt, rt.currentPackage.environment, nl_read(rt, s))))
+    except Exception:
+      let
+        msg = getCurrentExceptionMsg()
+
+      echo "\nGot exception with message '$msg'".format(["msg", msg])
 
 let nutslisp_logo = """
  ⣀⡀ ⡀⢀ ⣰⡀ ⢀⣀   ⡇ ⠄ ⢀⣀ ⣀⡀
