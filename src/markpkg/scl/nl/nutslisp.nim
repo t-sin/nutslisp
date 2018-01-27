@@ -39,6 +39,13 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.nativeBody = nl_eq
   s.function = fn
 
+  s = intern("atom", rt.currentPackage)[0]
+  fn = makeLispObject[LispFunction]()
+  fn.lambdaList = nil
+  fn.nativeP = true
+  fn.nativeBody = nl_atom
+  s.function = fn
+
   rt.packageTable[pkgName] = pkg
 
   return pkg
