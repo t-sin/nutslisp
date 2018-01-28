@@ -84,9 +84,6 @@
         You can play this REPL, if you want.
 
         <script src="nutslisp.js"></script>
-        <script>
-         alert(readFromString('(setq hoge 1)'));
-        </script>
         <div id="app">
           <div class="line" v-for="line in lines">
             <div class="stdout" v-if="line.type == 'output'">{{ line.msg }}</div>
