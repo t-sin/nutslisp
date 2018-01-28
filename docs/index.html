@@ -6,11 +6,14 @@
 
     <link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Neucha" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
     <style type="text/css">
      main, footer {
          font-family: "Neucha";
-         font-size: 1.2em;
+         font-size: 20px;
      }
      main {
          margin-left: 40px;
@@ -26,6 +29,29 @@
      }
      footer {
          margin-top: 50px;
+     }
+     #app * {
+         margin: 0;
+         font-family: "inconsolata";
+     }
+     #app {
+         margin: 10px 0 0;
+         padding: 10px;
+         background-color: rgba(100, 100, 100, 1);
+         color: rgba(255, 255, 255, 0.8);
+     }
+     #app .line {
+         width: 100%;
+     }
+     #app .line .prompt * {
+         display: inline-block;
+     }
+     #app .line .prompt input {
+         height: 20px;
+         font-size: 20px;
+         border: none;
+         background-color: rgba(100, 100, 100, 1);
+         color: rgba(255, 255, 255, 0.8);
      }
     </style>
   </head>
@@ -55,7 +81,62 @@
       <section>
         <h2>Try Nuts Lisp</h2>
 
-        comming soooooon...
+        You can play this REPL, if you want.
+
+        <script src="nutslisp.js"></script>
+        <script>
+         alert(readFromString('(setq hoge 1)'));
+        </script>
+        <div id="app">
+          <div class="line" v-for="line in lines">
+            <div class="stdout" v-if="line.type == 'output'">{{ line.msg }}</div>
+            <div class="prompt" v-if="line.type == 'prompt'">
+              <div class="prompt-msg" >{{ line.msg }}</div>
+              <input type="text"
+                     v-model="readline"
+                     v-on:keydown.enter="rep(line.id)">
+            </div>
+            <div class="prompt" v-if="line.type == 'old-prompt'">
+              <div class="prompt-msg" >{{ line.msg }}</div>
+              <span>{{ line.input }}</span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <script>
+         const app = new Vue({
+             el: '#app',
+             data: {
+                 readline: "",
+                 lineCount: 0,
+                 lines: [],
+             },
+             methods: {
+                 rep: function (id) {
+                     this.lines[id].input = this.readline.toString()
+                     this.lines[id].type = 'old-prompt'
+                     let result = readFromString(this.readline)
+                     this.print(result)
+                     this.prompt()
+                 },
+                 prompt: function () {
+                     let prompt = 'nuts-lisp> '
+                     this.readline = ''
+                     this.lines.push(
+                         { id: this.lineCount++, type: 'prompt', msg: prompt })
+                 },
+                 print: function (str) {
+                     this.lines.push(
+                         { id: this.lineCount++, type: 'output', msg: str })
+                 }
+             },
+             created: function () {
+                 this.print('⣀⡀ ⡀⢀ ⣰⡀ ⢀⣀   ⡇ ⠄ ⢀⣀ ⣀⡀')
+                 this.print('⠇⠸ ⠣⠼ ⠘⠤ ⠭⠕   ⠣ ⠇ ⠭⠕ ⡧⠜')
+                 this.prompt()
+             }
+         })
+        </script>
       </section>
     </main>
 
@@ -63,8 +144,6 @@
       TANAKA Shinichi, CC BY-SA 4.0
     </footer>
 
-    <script src="hoge.js"></script>
-    <script>alert(readFromString("(cons 1 (cons 2 (cons 3 nil)))"));</script>
   </body>
 </html>
 
