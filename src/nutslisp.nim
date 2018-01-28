@@ -52,6 +52,9 @@ when not defined(javascript):
 when defined(javascript):
   var rt = initNlRuntime()
 
+  proc getCurrentPackageName(): cstring {.exportc.} =
+    return rt.currentPackage.name
+
   proc readFromString*(str: cstring): cstring {.exportc.} =
     let stream = makeLispStream[LispCodepoint](
       setCharacter, sdtInput,

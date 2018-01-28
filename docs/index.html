@@ -120,7 +120,7 @@
                      this.prompt()
                  },
                  prompt: function () {
-                     let prompt = 'nuts-lisp> '
+                     let prompt = getCurrentPackageName() + '> '
                      this.readline = ''
                      this.lines.push(
                          { id: this.lineCount++, type: 'prompt', msg: prompt })
