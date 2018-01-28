@@ -11,6 +11,10 @@ srcDir = "src"
 
 requires "nim >= 0.17.2"
 
+task buildjs, "Build nutslisp for github pages":
+  withDir "src":
+    exec "nim js -d:javascript -o:../docs/nutslisp.js nutslisp.nim"
+
 task test, "Run Nuts Lisp tests":
   withDir "tests":
     exec "nim c -r tester"
