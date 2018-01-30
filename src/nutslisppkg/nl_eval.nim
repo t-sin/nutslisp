@@ -1,3 +1,4 @@
+import strutils
 import tables
 
 import objects
@@ -174,7 +175,12 @@ proc eval*(rt: LispRuntime,
 
     else:
       let fn = op.function
-      return funcall(rt, env, fn, args)
+      if isNil(fn):
+        raise newException(
+          Exception, "function $name is undefined".format(
+            "name", op.name))
+      else:
+        return funcall(rt, env, fn, args)
 
   else:
     return obj
