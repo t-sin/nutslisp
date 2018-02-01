@@ -36,17 +36,15 @@ when not defined(javascript):
     while true:
       let readP = readFromStdin(s, rt.currentPackage.name & "> ")
       if not readP:
-        echo "\nquit by user."
+        echo "quit by user."
         quit(0)
 
       try:
         stdout.writeLine(write(eval(
           rt, rt.currentPackage.environment, nl_read(rt, s))))
       except Exception:
-        let
-          msg = getCurrentExceptionMsg()
-
-        echo "\nGot exception with message '$msg'".format(["msg", msg])
+        let msg = getCurrentExceptionMsg()
+        echo "Got exception with message '$msg'".format(["msg", msg])
 
   when isMainModule:
     echo nutslisp_logo
