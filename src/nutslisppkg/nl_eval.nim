@@ -117,6 +117,9 @@ proc funcall(rt: LispRuntime,
              env: LispEnvironment,
              fn: LispFunction,
              args: LispList): LispT =
+  if isNil(fn):
+    raise newException(Exception, "function is undefined")
+
   if fn.nativeP:
     return fn.nativeBody(rt, evalArgs(rt, env, args))
 
@@ -175,12 +178,7 @@ proc eval*(rt: LispRuntime,
 
     else:
       let fn = op.function
-      if isNil(fn):
-        raise newException(
-          Exception, "function $name is undefined".format(
-            "name", op.name))
-      else:
-        return funcall(rt, env, fn, args)
+      return funcall(rt, env, fn, args)
 
   else:
     return obj
