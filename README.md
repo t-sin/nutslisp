@@ -1,6 +1,6 @@
 # Nuts Lisp - Trivial Lisp-2 Interpreter
 
-For Mark the squirrel.
+> He doesn't bury nuts he hasn't picked up.
 
 
 ## Install
