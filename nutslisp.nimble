@@ -3,7 +3,7 @@
 version       = "0.1.0"
 author        = "TANAKA Shinichi"
 description   = "Trivial Lisp-2 Interpreter"
-license       = "GPLv3"
+license       = "GPL-3.0"
 
 bin = @["nutslisp"]
 srcDir = "src"
