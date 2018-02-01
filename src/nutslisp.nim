@@ -24,6 +24,7 @@ when not defined(javascript):
     if isNil(line):
       return false
 
+    discard historyAdd(line)
     for cp in decodeBytes($(line)):
       discard nl_writeElem(s, cp)
     return true
