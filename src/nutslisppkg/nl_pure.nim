@@ -31,11 +31,7 @@ macro eqReturn(t: untyped, eqexp: untyped): typed =
   result.add(returnStmt)
 
 proc eq*(obj1: LispT, obj2: LispT): bool =
-  if objAreTyped(LispNull):
-    eqReturn(LispNull, true)
-
-  else:
-    return obj1.id == obj2.id
+  return obj1.id == obj2.id
 
 proc nl_eq*(rt: LispRuntime,
             args: LispList): LispT =
