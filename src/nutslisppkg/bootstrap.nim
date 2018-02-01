@@ -35,6 +35,7 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_eq
+  s.package = rt.currentPackage
   s.function = fn
 
   s = intern("atom", rt.currentPackage)[0]
@@ -42,6 +43,7 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_atom
+  s.package = rt.currentPackage
   s.function = fn
 
   s = intern("car", rt.currentPackage)[0]
@@ -49,6 +51,7 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_car
+  s.package = rt.currentPackage
   s.function = fn
 
   s = intern("cdr", rt.currentPackage)[0]
@@ -56,6 +59,7 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_cdr
+  s.package = rt.currentPackage
   s.function = fn
 
   s = intern("cons", rt.currentPackage)[0]
@@ -63,6 +67,7 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_cons
+  s.package = rt.currentPackage
   s.function = fn
 
   rt.packageTable[pkgName] = pkg
