@@ -15,6 +15,8 @@ import nutslisppkg.bootstrap
 let nutslisp_logo* = """
  ⣀⡀ ⡀⢀ ⣰⡀ ⢀⣀   ⡇ ⠄ ⢀⣀ ⣀⡀
  ⠇⠸ ⠣⠼ ⠘⠤ ⠭⠕   ⠣ ⠇ ⠭⠕ ⡧⠜
+
+    --- He doesn't bury nuts he hasn't picked up.
 """
 
 
