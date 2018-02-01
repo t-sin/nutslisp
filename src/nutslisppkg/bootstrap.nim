@@ -30,6 +30,14 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
     s: LispSymbol
     fn: LispFunction
 
+  s = intern("t", rt.currentPackage)[0]
+  s.package = rt.currentPackage
+  s.value = makeLispObject[LispT]()
+
+  s = intern("nil", rt.currentPackage)[0]
+  s.package = rt.currentPackage
+  s.value = makeLispObject[LispNull]()
+
   s = intern("eq", rt.currentPackage)[0]
   fn = makeLispObject[LispFunction]()
   fn.lambdaList = nil
