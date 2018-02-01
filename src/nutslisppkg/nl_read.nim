@@ -60,10 +60,10 @@ proc readList(rt: LispRuntime,
       discard nl_readElem(s, false)
 
       if isNil(list):
-        return makeLispObject[LispNull]()
+        return rt.symbolNil
 
       else:
-        tail.cdr = makeLispObject[LispNull]()
+        tail.cdr = rt.symbolNil
         return list
 
     else:
@@ -108,14 +108,14 @@ proc readSymbol(rt: LispRuntime,
         discard nl_readElem(s, false)
 
       if name.len <= 0:
-        return makeLispObject[LispNull]()
+        return rt.symbolNil
 
       else:
         if name == "t":
-          return makeLispObject[LispT]()
+          return rt.symbolNil
 
         if name == "nil":
-          return makeLispObject[LispNull]()
+          return rt.symbolNil
 
         else:
           return intern(name, rt.currentPackage)[0]
@@ -161,7 +161,7 @@ proc nl_read*(rt: LispRuntime,
   (cp, eof) = nl_readElem(s, true)
 
   if eof:
-    return makeLispObject[LispNull]()
+    return rt.symbolNil
 
   elif cp in nl_number:
     return readNumber(rt, s)
