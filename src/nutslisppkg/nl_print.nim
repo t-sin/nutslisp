@@ -39,21 +39,6 @@ proc write*(obj: LispT): string =
     let s = obj.LispSymbol
     return s.name
 
-  elif obj of LispList:
-    proc write_list(obj: LispT): string =
-      if obj of LispNull:
-        return ""
-      else:
-        let
-          lis = LispList(obj)
-          cdrstr = write_list(lis.cdr)
-        if cdrstr.len == 0:
-           return write(lis.car)
-        else:
-          return write(lis.car) & " " & cdrstr
-
-    return "($list)".format("list", write_list(obj))
-
   elif obj of LispFunction:
     let fn = LispFunction(obj)
 
@@ -65,8 +50,24 @@ proc write*(obj: LispT): string =
 
   elif obj of LispCons:
     let c = LispCons(obj)
-    return "($car . $cdr)".format(
-      "car", write(c.car), "cdr", write(c.cdr))
+    proc write_list(obj: LispT): string =
+      if obj of LispNull:
+        return ""
+      else:
+        let
+          lis = LispCons(obj)
+          cdrstr = write_list(lis.cdr)
+        if cdrstr.len == 0:
+           return write(lis.car)
+        else:
+          return write(lis.car) & " " & cdrstr
+
+    if c.cdr of LispCons:
+      return "($list)".format("list", write_list(obj))
+
+    else:
+      return "($car . $cdr)".format(
+        "car", write(c.car), "cdr", write(c.cdr))
 
   else:
     return "t"
