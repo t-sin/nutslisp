@@ -2,7 +2,7 @@
 
 version       = "0.1.0"
 author        = "TANAKA Shinichi"
-description   = "Trivial Lisp-2 Interpleter"
+description   = "Trivial Lisp-2 Interpreter"
 license       = "GPLv3"
 
 bin = @["nutslisp"]

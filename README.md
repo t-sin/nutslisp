@@ -1,4 +1,4 @@
-# Nuts Lisp - Trivial Lisp-2 Interpleter
+# Nuts Lisp - Trivial Lisp-2 Interpreter
 
 For Mark the squirrel.
 
