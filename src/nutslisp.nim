@@ -1,6 +1,8 @@
 import sequtils
 import strutils
 
+import linenoise
+
 import nutslisppkg.utf8
 import nutslisppkg.objects
 import nutslisppkg.nl_streams
@@ -17,9 +19,14 @@ let nutslisp_logo* = """
 
 
 when not defined(javascript):
-  proc readFromStdin(s: LispStream) =
-    for cp in decodeBytes(stdin.readLine()):
+  proc readFromStdin(s: LispStream, prompt: string): bool =
+    let line = readLine(prompt)
+    if isNil(line):
+      return false
+
+    for cp in decodeBytes($(line)):
       discard nl_writeElem(s, cp)
+    return true
 
   proc nl_repl*() =
     let
@@ -27,11 +34,8 @@ when not defined(javascript):
       rt = initNlRuntime()
 
     while true:
-      write(stdout, rt.currentPackage.name & "> ")
-
-      try:
-        readFromStdin(s)
-      except Exception:
+      let readP = readFromStdin(s, rt.currentPackage.name & "> ")
+      if not readP:
         echo "\nquit by user."
         quit(0)
 
