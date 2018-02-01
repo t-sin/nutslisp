@@ -32,11 +32,13 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
 
   s = intern("t", rt.currentPackage)[0]
   s.package = rt.currentPackage
-  s.value = makeLispObject[LispT]()
+  rt.symbolT = makeLispObject[LispT]()
+  s.value = rt.symbolT
 
   s = intern("nil", rt.currentPackage)[0]
   s.package = rt.currentPackage
-  s.value = makeLispObject[LispNull]()
+  rt.symbolNil = makeLispObject[LispNull]()
+  s.value = rt.symbolNil
 
   s = intern("eq", rt.currentPackage)[0]
   fn = makeLispObject[LispFunction]()
