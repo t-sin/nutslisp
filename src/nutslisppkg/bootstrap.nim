@@ -90,6 +90,6 @@ proc initNlRuntime*(): LispRuntime =
     corePkg = initNlCorePackage(rt)
 
   rt.currentPackage = corePkg
-  discard initKeywordPackage(rt)
+  rt.keywordPkg = initKeywordPackage(rt)
 
   return rt

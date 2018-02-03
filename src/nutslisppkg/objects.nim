@@ -111,5 +111,7 @@ type
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
     currentPackage*: LispPackage
+
+    keywordPkg*: LispPackage
     symbolT*: LispT
     symbolNil*: LispNull
