@@ -1,9 +1,9 @@
 import sequtils
 import unittest
 
-import nutslisppkg.nl.objects
-import nutslisppkg.nl.utf8
-import nutslisppkg.nl.nl_streams
+import nutslisppkg.utf8
+import nutslisppkg.nl_objects
+import nutslisppkg.nl_streams
 
 
 proc ch(ch: char): LispCodepoint =
