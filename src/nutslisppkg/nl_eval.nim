@@ -150,6 +150,8 @@ proc eval*(rt: LispRuntime,
         raise newException(Exception, "unbound-variable")
       else:
         return s.value
+    elif s.package == rt.keywordPkg:
+      return s
     elif tables.hasKey(env.binding, s.id):
       return env.binding[s.id].value
     else:

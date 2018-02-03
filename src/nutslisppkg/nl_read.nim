@@ -124,6 +124,30 @@ proc readSymbol(rt: LispRuntime,
       discard nl_readElem(s, false)
       name.add(encodeCodepoint(cp))
 
+proc readKeyword(rt: LispRuntime,
+                 s: LispStream[LispCodepoint]): LispT =
+  var
+    name = ""
+    cp: LispCodepoint
+    eof: bool
+
+  while true:
+    (cp, eof) = nl_readElem(s, true)
+
+    if eof or cp in nl_whitespace or cp in nl_terminate_macro:
+      if cp in nl_whitespace:
+        discard nl_readElem(s, false)
+
+      if name.len <= 0:
+        return rt.symbolNil
+
+      else:
+        return intern(name, rt.keywordPkg)[0]
+
+    else:
+      discard nl_readElem(s, false)
+      name.add(encodeCodepoint(cp))
+
 proc readNumber(rt: LispRuntime,
                 s: LispStream[LispCodepoint]): LispT =
   var
@@ -174,6 +198,10 @@ proc nl_read*(rt: LispRuntime,
   of ord('"'):
     discard nl_readElem(s, false)
     return readString(rt, s)
+
+  of ord(':'):
+    discard nl_readElem(s, false)
+    return readKeyword(rt, s)
 
   else:
     return readSymbol(rt, s)

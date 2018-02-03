@@ -37,7 +37,10 @@ proc print*(obj: LispT): string =
 
   elif obj of LispSymbol:
     let s = obj.LispSymbol
-    return s.name
+    if s.package.name == "keyword":
+      return ":$name".format("name", s.name)
+    else:
+      return s.name
 
   elif obj of LispFunction:
     let fn = LispFunction(obj)
