@@ -1,7 +1,7 @@
 import math
 import sequtils
 
-import objects
+import nl_objects
 import utf8
 
 

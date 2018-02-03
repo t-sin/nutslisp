@@ -4,7 +4,7 @@ import strutils
 import linenoise
 
 import nutslisppkg.utf8
-import nutslisppkg.objects
+import nutslisppkg.nl_objects
 import nutslisppkg.nl_streams
 import nutslisppkg.nl_print
 import nutslisppkg.nl_read

@@ -1,6 +1,6 @@
 import macros
 
-import objects
+import nl_objects
 import nl_runtime
 
 

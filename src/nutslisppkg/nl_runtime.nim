@@ -1,6 +1,6 @@
 import tables
 
-import objects
+import nl_objects
 
 
 proc initEnvironment*(): LispEnvironment =

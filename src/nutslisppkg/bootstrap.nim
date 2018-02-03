@@ -1,7 +1,7 @@
 import macros
 import tables
 
-import objects
+import nl_objects
 import nl_dataflow
 import nl_eval
 import nl_print

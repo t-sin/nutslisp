@@ -1,6 +1,6 @@
 import strutils
 
-import objects
+import nl_objects
 
 proc print*(obj: LispT): string =
   assert(not isNil(obj))

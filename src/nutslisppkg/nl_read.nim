@@ -1,6 +1,6 @@
 import strutils
 
-import objects
+import nl_objects
 import nl_streams
 import nl_runtime
 import utf8

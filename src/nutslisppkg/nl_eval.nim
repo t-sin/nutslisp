@@ -1,7 +1,7 @@
 import strutils
 import tables
 
-import objects
+import nl_objects
 import nl_runtime
 import nl_pure
 
