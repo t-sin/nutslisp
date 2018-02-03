@@ -9,7 +9,7 @@ import nutslisppkg.nl_streams
 import nutslisppkg.nl_print
 import nutslisppkg.nl_read
 import nutslisppkg.nl_eval
-import nutslisppkg.bootstrap
+import nutslisppkg.nl_bootstrap
 
 
 let nutslisp_logo* = """
