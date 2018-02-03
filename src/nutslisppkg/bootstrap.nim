@@ -2,6 +2,7 @@ import macros
 import tables
 
 import objects
+import nl_dataflow
 import nl_eval
 import nl_print
 import nl_pure
@@ -77,6 +78,14 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   fn.lambdaList = nil
   fn.nativeP = true
   fn.nativeBody = nl_cons
+  s.package = rt.currentPackage
+  s.function = fn
+
+  s = intern("fset", rt.currentPackage)[0]
+  fn = makeLispObject[LispFunction]()
+  fn.lambdaList = nil
+  fn.nativeP = true
+  fn.nativeBody = nl_fset
   s.package = rt.currentPackage
   s.function = fn
 
