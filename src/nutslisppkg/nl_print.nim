@@ -2,7 +2,7 @@ import strutils
 
 import objects
 
-proc write*(obj: LispT): string =
+proc print*(obj: LispT): string =
   assert(not isNil(obj))
 
   if obj of LispNull:
@@ -21,7 +21,7 @@ proc write*(obj: LispT): string =
     var s = "("
 
     for elm in vec.content:
-      s.add(write(elm))
+      s.add(print(elm))
       s.add(" ")
 
     s[s.len - 1] = ')'
@@ -46,7 +46,7 @@ proc write*(obj: LispT): string =
       return "#<function native $id>".format("id", fn.id)
     else:
       return "#<function lisp (lambda $args $body)>".format(
-        "args", write(fn.lambdaList), "body", write(fn.body))
+        "args", print(fn.lambdaList), "body", print(fn.body))
 
   elif obj of LispCons:
     let c = LispCons(obj)
@@ -58,16 +58,17 @@ proc write*(obj: LispT): string =
           lis = LispCons(obj)
           cdrstr = write_list(lis.cdr)
         if cdrstr.len == 0:
-           return write(lis.car)
+           return print(lis.car)
         else:
-          return write(lis.car) & " " & cdrstr
+          return print(lis.car) & " " & cdrstr
 
     if c.cdr of LispCons:
       return "($list)".format("list", write_list(obj))
 
     else:
       return "($car . $cdr)".format(
-        "car", write(c.car), "cdr", write(c.cdr))
+        "car", print(c.car), "cdr", print(c.cdr))
 
   else:
     return "t"
+

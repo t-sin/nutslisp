@@ -43,7 +43,7 @@ when not defined(javascript):
         quit(0)
 
       try:
-        stdout.writeLine(write(eval(
+        stdout.writeLine(print(eval(
           rt, rt.currentPackage.environment, nl_read(rt, s))))
       except Exception:
         let msg = getCurrentExceptionMsg()
@@ -66,7 +66,7 @@ when defined(javascript):
       256, toSeq(decodeBytes($(str))))
 
     try:
-      result = write(eval(
+      result = print(eval(
         rt, rt.currentPackage.environment, nl_read(rt, stream)))
 
     except Exception:
