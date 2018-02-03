@@ -85,18 +85,6 @@ proc bindLambdaList(rt: LispRuntime,
       newEnv.binding[lambda_cdr.car.id].value = args_cdr.car
       return bindLambdaList(rt, env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
 
-proc list2seq(list: LispList): seq[LispT] =
-  if list of LispNull:
-    return @[]
-
-  elif list.cdr of LispNull:
-    return @[list.car]
-
-  else:
-    var rest = list2seq(LispList(list.cdr))
-    rest.add(list.car)
-    return rest
-
 proc evalArgs(rt: LispRuntime,
               env: LispEnvironment,
               args: LispList): LispList =
