@@ -50,7 +50,7 @@ proc evalLambdaExp(rt: LispRuntime,
   var
     fn = makeLispObject[LispFunction]()
   if args.car of LispNull:
-    fn.lambdaList = nil
+    fn.lambdaList = rt.symbolNil
   else:
     fn.lambdaList = LispList(args.car)
   fn.body = args.cdr
