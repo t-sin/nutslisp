@@ -163,6 +163,20 @@ proc eval*(rt: LispRuntime,
     if op.name == "if":
       return evalIf(rt, env, args)
 
+    if op.name == "progn":
+      var
+        car = args.car
+        cdr = args.cdr
+
+      while true:
+        if cdr of LispNull:
+          return eval(rt, env, car)
+        else:
+          discard eval(rt, env, car)
+
+        car = LispList(cdr).car
+        cdr = LispList(cdr).cdr
+
     if op.name == "lambda":
       return evalLambdaExp(rt, env, args)
 
