@@ -53,7 +53,7 @@ proc evalLambdaExp(rt: LispRuntime,
     fn.lambdaList = rt.symbolNil
   else:
     fn.lambdaList = LispList(args.car)
-  fn.body = LispList(args.cdr).car
+  fn.body = args.cdr
   return fn
 
 proc evalProgn(rt: LispRuntime,
@@ -129,8 +129,7 @@ proc funcall(rt: LispRuntime,
 
   else:
     var newEnv = bindLambdaList(rt, env, fn.lambdaList, args)
-    echo repr(newEnv)
-    return eval(rt, newEnv, fn.body)
+    return evalProgn(rt, newEnv, LispList(fn.body))
 
 proc eval*(rt: LispRuntime,
            env: LispEnvironment,
