@@ -56,6 +56,22 @@ proc evalLambdaExp(rt: LispRuntime,
   fn.body = LispList(args.cdr).car
   return fn
 
+proc evalProgn(rt: LispRuntime,
+               env: LispEnvironment,
+               body: LispList): LispT =
+  var
+    car = body.car
+    cdr = body.cdr
+
+  while true:
+    if cdr of LispNull:
+      return eval(rt, env, car)
+    else:
+      discard eval(rt, env, car)
+
+    car = LispList(cdr).car
+    cdr = LispList(cdr).cdr
+
 proc bindLambdaList(rt: LispRuntime,
                     env: LispEnvironment,
                     lambdaList: LispList,
@@ -164,18 +180,7 @@ proc eval*(rt: LispRuntime,
       return evalIf(rt, env, args)
 
     if op.name == "progn":
-      var
-        car = args.car
-        cdr = args.cdr
-
-      while true:
-        if cdr of LispNull:
-          return eval(rt, env, car)
-        else:
-          discard eval(rt, env, car)
-
-        car = LispList(cdr).car
-        cdr = LispList(cdr).cdr
+      return evalProgn(rt, env, args)
 
     if op.name == "lambda":
       return evalLambdaExp(rt, env, args)
