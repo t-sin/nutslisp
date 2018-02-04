@@ -43,8 +43,8 @@ when not defined(javascript):
         quit(0)
 
       try:
-        stdout.writeLine(print(eval(
-          rt, rt.currentPackage.environment, nl_read(rt, s))))
+        let obj = nl_read(rt, s)
+        echo print(eval(rt, rt.currentPackage.environment, obj))
       except Exception:
         let msg = getCurrentExceptionMsg()
         echo "Got exception with message '$msg'".format(["msg", msg])
