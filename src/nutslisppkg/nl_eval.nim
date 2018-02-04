@@ -53,7 +53,7 @@ proc evalLambdaExp(rt: LispRuntime,
     fn.lambdaList = rt.symbolNil
   else:
     fn.lambdaList = LispList(args.car)
-  fn.body = args.cdr
+  fn.body = LispList(args.cdr).car
   return fn
 
 proc bindLambdaList(rt: LispRuntime,
