@@ -121,6 +121,25 @@ proc evalArgs(rt: LispRuntime,
 
   return cons
 
+proc bindArgs(rt: LispRuntime,
+              env: LispEnvironment,
+              lambdaList: LispLambdaList,
+              args: LispList,
+              index: int = 0): LispEnvironment =
+  let
+    newEnv = makeLispObject[LispEnvironment]()
+    val = eval(rt, env, args.car)
+    rest = LispList(args.cdr)
+  env.parent = env
+  env.binding = newTable[LispObjectId, LispSymbol]()
+
+  if index >= lambdaList.ordinal.len:
+    raise newException(Exception, "too many arguments")
+  else:
+    newEnv.binding[lambdaList.ordinal[index].name] = val # oops type mismatch
+
+  return newEnv
+
 proc funcall(rt: LispRuntime,
              env: LispEnvironment,
              fn: LispFunction,
@@ -132,8 +151,7 @@ proc funcall(rt: LispRuntime,
     return fn.nativeBody(rt, evalArgs(rt, env, args))
 
   else:
-    var newEnv: LispEnvironment  # = bindLambdaList(rt, env, fn.lambdaList, args)
-    #echo repr(newEnv)
+    var newEnv = bindArgs(rt, env, fn.lambdaList, args)
     return evalProgn(rt, newEnv, LispList(fn.body))
 
 proc eval*(rt: LispRuntime,
