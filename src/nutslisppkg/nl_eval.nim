@@ -44,15 +44,52 @@ proc evalSetq(rt: LispRuntime,
     else:
       return evalSetq(rt, env, LispList(rest.cdr))
 
+proc parseArg(rt: LispRuntime,
+              env: LispEnvironment,
+              args: LispList,
+              lambdaList: LispLambdaList): LispLambdaList =
+
+  proc exists(ordinal: seq[LArg], s: LispSymbol): bool =
+    for i in 0..<ordinal.len:
+      if ordinal[i].name.id == s.id:
+        return true
+    return false
+
+  let
+    arg = LispSymbol(args.car)
+    rest = LispList(args.cdr)
+
+  if exists(lambdaList.ordinal, arg):
+    raise newException(Exception, "bad lambda list: '" & $(arg.name) & "' is already apeared")
+  else:
+    let a = makeLispObject[LArg]()
+    a.name = arg
+    lambdaList.ordinal.add(a)
+
+  if rest of LispNull:
+    return lambdaList
+  else:
+    return parseArg(rt, env, rest, lambdaList)
+
+proc parseArgs(rt: LispRuntime,
+               env: LispEnvironment,
+               args: LispList): LispLambdaList =
+  let lambdaList = makeLispObject[LispLambdaList]()
+  lambdaList.ordinal = newSeq[LArg]()
+  # lambdaList.optional = newTable[LispObjectId, LArg]()
+  # lambdaList.keyword = newTable[LispObjectId, LArg]()
+
+  return parseArg(rt, env, args, lambdaList)
+
 proc evalLambdaExp(rt: LispRuntime,
                    env: LispEnvironment,
                    args: LispList): LispFunction =
   var
     fn = makeLispObject[LispFunction]()
   if args.car of LispNull:
-    fn.lambdaList = rt.symbolNil
+    fn.lambdaList = nil
   else:
-    fn.lambdaList = LispList(args.car)
+    fn.lambdaList = parseArgs(rt, env, LispList(args.car))
   fn.body = args.cdr
   return fn
 
