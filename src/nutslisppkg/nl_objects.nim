@@ -62,13 +62,13 @@ type
     name*: LispSymbol
     defaultValue*: LispT
   LOrdinalArgs* = seq[LArg]
-  LOptionalArgs* = TableRef[LispObjectId, LArg]
-  LKeywordArgs* = TableRef[LispObjectId, LArg]
+  # LOptionalArgs* = TableRef[LispObjectId, LArg]
+  # LKeywordArgs* = TableRef[LispObjectId, LArg]
 
   LispLambdaList* = ref object of LispT
     ordinal*: LOrdinalArgs
-    optional*: LOptionalArgs
-    keyword*: LKeywordArgs
+    # optional*: LOptionalArgs
+    # keyword*: LKeywordArgs
 
   LispFunction* = ref object of LispT
     lambdaList*: LispLambdaList
