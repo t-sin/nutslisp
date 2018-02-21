@@ -72,35 +72,6 @@ proc evalProgn(rt: LispRuntime,
     car = LispList(cdr).car
     cdr = LispList(cdr).cdr
 
-proc bindLambdaList(rt: LispRuntime,
-                    env: LispEnvironment,
-                    lambdaList: LispList,
-                    args: LispList,
-                    newEnv: LispEnvironment = nil): LispEnvironment =
-  var new_env: LispEnvironment
-
-  # TODO: checks length of both lambdaList and args
-  if isNil(newEnv):
-    new_env = initEnvironment()
-    new_env.parent = env
-  else:
-    new_env = newEnv
-
-  if lambdaList of LispNull:
-    return new_env
-  elif lambdaList.cdr of LispNull:
-    return new_env
-  else:
-    var
-      lambda_cdr = LispList(lambdaList.cdr)
-      args_cdr = LispList(args.cdr)
-
-    if not (lambda_cdr.car of LispSymbol):
-      raise newException(Exception, "invalid lambda list")
-    else:
-      newEnv.binding[lambda_cdr.car.id].value = args_cdr.car
-      return bindLambdaList(rt, env, LispList(lambda_cdr.cdr), LispList(args_cdr.cdr), new_env)
-
 proc evalArgs(rt: LispRuntime,
               env: LispEnvironment,
               args: LispList): LispList =
@@ -128,7 +99,8 @@ proc funcall(rt: LispRuntime,
     return fn.nativeBody(rt, evalArgs(rt, env, args))
 
   else:
-    var newEnv = bindLambdaList(rt, env, fn.lambdaList, args)
+    var newEnv: LispEnvironment  # = bindLambdaList(rt, env, fn.lambdaList, args)
+    #echo repr(newEnv)
     return evalProgn(rt, newEnv, LispList(fn.body))
 
 proc eval*(rt: LispRuntime,
