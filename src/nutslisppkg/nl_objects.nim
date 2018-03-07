@@ -77,15 +77,37 @@ type
     nativeBody*: proc (rt: LispRuntime, args: LispList): LispT
 
 
+  LispSymbolId* = LispObjectId
+  LispBinding*[T] = ref object
+    binding*: TableRef[LispSymbolId, T]
+
   LispPackage* = ref object of LispT
     name*: string
     nicknames*: seq[string]
-    environment*: LispEnvironment
+    environment*: TableRef[string, LispSymbol]
 
   LispEnvironment* = ref object of LispT
     parent*: LispEnvironment
-    binding*: TableRef[LispObjectId, LispSymbol]
 
+  LispGrobalEnvironment* = ref object of LispEnvironment
+    packageTable*: TableRef[string, LispPackage]
+    currentPackage*: LispPackage
+
+    # types*: LispBinding[LispType]
+
+    keywordPkg*: LispPackage
+    symbolT*: LispT
+    symbolNil*: LispT
+
+  LispDynamicEnvironment* = ref object of LispEnvironment
+    dynamicVars*: LispBinding[LispT]
+    # catches*: LispBinding[LispCatches]
+    # unwindEnd*: LispBinding[LispUnwindEnd]
+    # handlers*: LispBinding[LispHandler]
+
+  LispLexicalEnvironment* = ref object of LispEnvironment
+    variables*: LispBinding[LispT]
+    functions*: LispBinfing[LispFunction]
 
   SyntaxType* = enum
     stConstituent, stInvalid, stTermMacro, stNonTermMacro,
@@ -118,7 +140,7 @@ type
 
   LispCondition* = ref object of Exception
 
-
+  # runtime will remove in near future
   LispRuntime* = ref object of RootObj
     readtable*: LispReadtable
     packageTable* : TableRef[string, LispPackage]
