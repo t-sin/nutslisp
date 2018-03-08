@@ -109,6 +109,7 @@ type
     variables*: LispBinding[LispT]
     functions*: LispBinding[LispFunction]
 
+
   SyntaxType* = enum
     stConstituent, stInvalid, stTermMacro, stNonTermMacro,
     stMultipleEscape, stSingleEscape, stWhitespace
