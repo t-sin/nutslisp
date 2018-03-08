@@ -4,8 +4,8 @@ import nl_objects
 
 
 proc makePackage*(name: string,
-                   nicknames: seq[string],
-                   uses: seq[string]): LispPackage =
+                  nicknames: seq[string],
+                  uses: seq[string]): LispPackage =
   result = makeLispObject[LispPackage]()
   result.name = name
   result.nicknames = nicknames
