@@ -84,13 +84,13 @@ type
   LispPackage* = ref object of LispT
     name*: string
     nicknames*: seq[string]
-    environment*: TableRef[string, LispSymbol]
+    symbols*: TableRef[string, LispSymbol]
 
   LispEnvironment* = ref object of LispT
     parent*: LispEnvironment
 
   LispGrobalEnvironment* = ref object of LispEnvironment
-    packageTable*: TableRef[string, LispPackage]
+    packages*: TableRef[string, LispPackage]
     currentPackage*: LispPackage
 
     # types*: LispBinding[LispType]
@@ -102,7 +102,7 @@ type
   LispDynamicEnvironment* = ref object of LispEnvironment
     dynamicVars*: LispBinding[LispT]
     # catches*: LispBinding[LispCatches]
-    # unwindEnd*: LispBinding[LispUnwindEnd]
+    # unwindEnds*: LispBinding[LispUnwindEnd]
     # handlers*: LispBinding[LispHandler]
 
   LispLexicalEnvironment* = ref object of LispEnvironment
