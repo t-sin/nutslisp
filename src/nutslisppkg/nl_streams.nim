@@ -54,7 +54,7 @@ proc makeAndCopySeq[T](src: seq[T],
 
   result = newSeq[seq[T]](bufNum)
   for i in 0..<bufNum:
-    result[i] = toBuffer(src, bufSize, i * bufSize)
+    result[i] = toBuffer(src, bufSize, int32(i) * bufSize)
 
 template assertPos(stream: untyped): untyped =
   assert(stream.head.aidx >= 0)
