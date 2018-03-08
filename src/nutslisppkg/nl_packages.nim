@@ -3,7 +3,7 @@ import tables
 import nl_objects
 
 
-proc makePackage1*(name: string,
+proc makePackage*(name: string,
                    nicknames: seq[string],
                    uses: seq[string]): LispPackage =
   result = makeLispObject[LispPackage]()
