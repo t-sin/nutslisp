@@ -84,6 +84,7 @@ type
   LispPackage* = ref object of LispT
     name*: string
     nicknames*: seq[string]
+    uses*: seq[string]
     symbols*: TableRef[string, LispSymbol]
 
   LispEnvironment* = ref object of LispT
