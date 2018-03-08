@@ -107,7 +107,7 @@ type
 
   LispLexicalEnvironment* = ref object of LispEnvironment
     variables*: LispBinding[LispT]
-    functions*: LispBinfing[LispFunction]
+    functions*: LispBinding[LispFunction]
 
   SyntaxType* = enum
     stConstituent, stInvalid, stTermMacro, stNonTermMacro,
