@@ -37,6 +37,8 @@ type
     package*: LispPackage
     plist*: LispList
 
+    exported*: bool
+
   LispNull* = ref object of LispList
 
   LispSpecialCharacter* = enum

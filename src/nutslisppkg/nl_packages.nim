@@ -19,16 +19,20 @@ proc intern*(name: string,
       let s = package.symbols[n]
 
       if isNil(s.package):
-        raise newException(Exception, "invalid symbol: " & s.package.name & ":" & s.name)
-      if s.package.name == package.name:
-        return (s, "internal")
-      if s.package.name == "keyword":
-        return (s, "external")
+        raise newException(Exception, "invalid symbol in package: " & s.package.name & ":" & s.name)
+
+      if s.package == package:
+        if s.exported:
+          return (s, "external")
+        else:
+          return (s, "internal")
+
       else:
         return (s, "inherited")
 
   let s = makeLispObject[LispSymbol]()
   s.name = name
   s.package = package
-  package.symbols[s.name] =s
+  let IS = LispInternalSymbol(stype: lstInternal, symbol: s)
+  package.symbols[s.name] = IS
   return (s, nil)
