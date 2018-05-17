@@ -94,10 +94,10 @@ proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   return pkg
 
 proc initNlRuntime*(): LispRuntime =
-  let
-    rt = initRuntime()
-    corePkg = initNlCorePackage(rt)
+  let rt = LispRuntime()
+  rt.packageTable = newTable[string, LispPackage]()
 
+  let corePkg = initNlCorePackage(rt)
   rt.currentPackage = corePkg
   rt.keywordPkg = initKeywordPackage(rt)
 

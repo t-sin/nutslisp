@@ -44,7 +44,7 @@ when not defined(javascript):
 
       try:
         let obj = nl_read(rt, s)
-        echo print(eval(rt, rt.currentPackage.environment, obj))
+        echo print(eval(rt, nil, obj))
       except Exception:
         let msg = getCurrentExceptionMsg()
         echo "Got exception with message '$msg'".format(["msg", msg])
