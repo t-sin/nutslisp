@@ -2,7 +2,7 @@ import strutils
 import tables
 
 import nl_objects
-import nl_runtime
+import nl_bootstrap
 import nl_pure
 
 

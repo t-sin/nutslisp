@@ -7,7 +7,7 @@ import nl_eval
 import nl_print
 import nl_pure
 import nl_read
-import nl_runtime
+import nl_packages
 import nl_streams
 import utf8
 

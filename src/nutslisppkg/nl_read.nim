@@ -2,7 +2,7 @@ import strutils
 
 import nl_objects
 import nl_streams
-import nl_runtime
+import nl_bootstrap
 import utf8
 
 

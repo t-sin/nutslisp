@@ -1,7 +1,7 @@
 import macros
 
 import nl_objects
-import nl_runtime
+import nl_bootstrap
 
 
 proc eq*(obj1: LispT, obj2: LispT): bool =
