@@ -14,25 +14,23 @@ proc makePackage*(name: string,
 
 proc intern*(name: string,
              package: LispPackage): (LispSymbol, string) =
-  for n in package.symbols.keys:
-    if n == name:
-      let s = package.symbols[n]
+  if tables.hasKey(package.symbols, name):
+    let s = package.symbols[name]
 
-      if isNil(s.package):
-        raise newException(Exception, "invalid symbol in package: " & s.package.name & ":" & s.name)
+    if isNil(s.package):
+      raise newException(Exception, "invalid symbol in package: " & s.package.name & ":" & s.name)
 
-      if s.package == package:
-        if s.exported:
-          return (s, "external")
-        else:
-          return (s, "internal")
-
+    if s.package == package:
+      if s.exported:
+        return (s, "external")
       else:
-        return (s, "inherited")
+        return (s, "internal")
+
+    else:
+      return (s, "inherited")
 
   let s = makeLispObject[LispSymbol]()
   s.name = name
   s.package = package
-  let IS = LispInternalSymbol(stype: lstInternal, symbol: s)
-  package.symbols[s.name] = IS
+  package.symbols[name] = s
   return (s, nil)

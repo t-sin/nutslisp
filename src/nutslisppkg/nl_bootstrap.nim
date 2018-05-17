@@ -15,7 +15,7 @@ import utf8
 proc initKeywordPackage*(rt: LispRuntime): LispPackage =
   var
     pkgName = "keyword"
-    pkg = initPackage(pkgName, @[])
+    pkg = makePackage(pkgName, @[], @[])
 
   rt.packageTable[pkgName] = pkg
   return pkg
@@ -23,7 +23,7 @@ proc initKeywordPackage*(rt: LispRuntime): LispPackage =
 proc initNlCorePackage*(rt: LispRuntime): LispPackage =
   var
     pkgName = "nuts-lisp"
-    pkg = initPackage(pkgName, @[])
+    pkg = makePackage(pkgName, @[], @[])
 
   rt.currentPackage = pkg
 
