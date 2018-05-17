@@ -80,8 +80,7 @@ type
 
 
   LispSymbolId* = LispObjectId
-  LispBinding*[T] = ref object
-    binding*: TableRef[LispSymbolId, T]
+  LispBinding*[T] = TableRef[LispSymbolId, T]
 
   LispPackage* = ref object of LispT
     name*: string

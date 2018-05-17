@@ -7,11 +7,11 @@ import nl_pure
 
 
 proc eval*(rt: LispRuntime,
-           env: LispEnvironment,
+           env: LispLexicalEnvironment,
            obj: LispT): LispT
 
 proc evalIf(rt: LispRuntime,
-            env: LispEnvironment,
+            env: LispLexicalEnvironment,
             args: LispList): LispT =
   var
     pred = eval(rt, env, args.car)
@@ -28,7 +28,7 @@ proc evalIf(rt: LispRuntime,
     return eval(rt, env, trueClause)
 
 proc evalSetq(rt: LispRuntime,
-              env: LispEnvironment,
+              env: LispLexicalEnvironment,
               pairs: LispList): LispT =
   if pairs.cdr of LispNull:
     raise newException(Exception, "invalid setq")
@@ -78,7 +78,7 @@ proc parseArgs(args: LispList): LispLambdaList =
   return parseArg(args, lambdaList)
 
 proc evalLambdaExp(rt: LispRuntime,
-                   env: LispEnvironment,
+                   env: LispLexicalEnvironment,
                    args: LispList): LispFunction =
   var
     fn = makeLispObject[LispFunction]()
@@ -90,7 +90,7 @@ proc evalLambdaExp(rt: LispRuntime,
   return fn
 
 proc evalProgn(rt: LispRuntime,
-               env: LispEnvironment,
+               env: LispLexicalEnvironment,
                body: LispList): LispT =
   var
     car = body.car
@@ -106,7 +106,7 @@ proc evalProgn(rt: LispRuntime,
     cdr = LispList(cdr).cdr
 
 proc evalArgs(rt: LispRuntime,
-              env: LispEnvironment,
+              env: LispLexicalEnvironment,
               args: LispList): LispList =
   let
     val = eval(rt, env, args.car)
@@ -122,26 +122,26 @@ proc evalArgs(rt: LispRuntime,
   return cons
 
 proc bindArgs(rt: LispRuntime,
-              env: LispEnvironment,
+              env: LispLexicalEnvironment,
               lambdaList: LispLambdaList,
               args: LispList,
-              index: int = 0): LispEnvironment =
+              index: int = 0): LispLexicalEnvironment =
   let
-    newEnv = makeLispObject[LispEnvironment]()
+    newEnv = makeLispObject[LispLexicalEnvironment]()
     val = eval(rt, env, args.car)
     rest = LispList(args.cdr)
-  env.parent = env
-  env.binding = newTable[LispObjectId, LispSymbol]()
+  newEnv.parent = env
+  newEnv.variables = newTable[LispSymbolId, LispT]()
 
   if index >= lambdaList.ordinal.len:
     raise newException(Exception, "too many arguments")
   else:
-    newEnv.binding[lambdaList.ordinal[index].name] = val # oops type mismatch
+    newEnv.variables[lambdaList.ordinal[index].id] = val # oops type mismatch
 
   return newEnv
 
 proc funcall(rt: LispRuntime,
-             env: LispEnvironment,
+             env: LispLexicalEnvironment,
              fn: LispFunction,
              args: LispList): LispT =
   if isNil(fn):
@@ -155,7 +155,7 @@ proc funcall(rt: LispRuntime,
     return evalProgn(rt, newEnv, LispList(fn.body))
 
 proc eval*(rt: LispRuntime,
-           env: LispEnvironment,
+           env: LispLexicalEnvironment,
            obj: LispT): LispT =
   if isNil(obj):
     raise newException(Exception, "nil!!")
@@ -178,8 +178,8 @@ proc eval*(rt: LispRuntime,
         return s.value
     elif s.package == rt.keywordPkg:
       return s
-    elif tables.hasKey(env.binding, s.id):
-      return env.binding[s.id].value
+    elif tables.hasKey(env.variables, s.id):
+      return env.variables[s.id]
     else:
       raise newException(Exception, "unbound-variable")
 
