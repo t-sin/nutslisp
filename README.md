@@ -1,7 +1,23 @@
 # Nuts Lisp - Trivial Lisp-2 Interpreter
 
 > He doesn't bury nuts he hasn't picked up.
+> 
+> --- Enjoe TOH, The Squirrel Awakes
 
+**This tiny, very tiny project is stopped**. Because: 
+
+- it is *my first Lisp*
+- *but is set the too large goals*
+    - The goal is *I want that Nuts Lisp glows up a subset of Common Lisp* ;P
+
+Nuts Lisp has these feature:
+
+- Nuts Lisp is Lisp-2; Nuts Lisp has different namespaces for variables and for functions
+- Nuts Lisp has pakagaes
+- Nuts Lisp has fulll freatured streams
+- Nuts Lisp can evaluate recursive functions! (wow!)
+
+I think I did a good job about the first trial of implementing Lisp.
 
 ## Install
 
