@@ -175,7 +175,7 @@ proc eval*(rt: LispRuntime,
 
     if isNil(env):
       if isNil(s.value):
-        raise newException(Exception, "unbound-variable")
+        raise newException(Exception, "unbound-variable (env is nil)")
       else:
         return s.value
     elif s.package == rt.keywordPkg:
@@ -183,7 +183,7 @@ proc eval*(rt: LispRuntime,
     elif tables.hasKey(env.variables, s.id):
       return env.variables[s.id]
     else:
-      raise newException(Exception, "unbound-variable")
+      raise newException(Exception, "unbound-variable (does not found)")
 
   elif obj of LispList:
     var
