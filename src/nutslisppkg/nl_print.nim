@@ -51,6 +51,17 @@ proc print*(obj: LispT): string =
       return "#<function lisp (lambda $args $body)>".format(
         "args", print(fn.lambdaList), "body", print(fn.body))
 
+  elif obj of LispLambdaList:
+    let lambdaList = LispLambdaList(obj)
+    var s = "("
+
+    for idx, arg in lambdaList.ordinal.pairs:
+      s.add(print(arg.name))
+      if idx < lambdaList.ordinal.len - 1:
+        s.add(" ")
+
+    return s & ")"
+
   elif obj of LispCons:
     let c = LispCons(obj)
     proc write_list(obj: LispT): string =
