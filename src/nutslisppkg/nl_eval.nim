@@ -128,15 +128,17 @@ proc bindArgs(rt: LispRuntime,
               index: int = 0): LispLexicalEnvironment =
   let
     newEnv = makeLispObject[LispLexicalEnvironment]()
-    val = eval(rt, env, args.car)
-    rest = LispList(args.cdr)
-  newEnv.parent = env
+  var
+    rest = args
   newEnv.variables = newTable[LispSymbolId, LispT]()
+  newEnv.parent = env
 
-  if index >= lambdaList.ordinal.len:
-    raise newException(Exception, "too many arguments")
-  else:
-    newEnv.variables[lambdaList.ordinal[index].id] = val # oops type mismatch
+  # TODO: argument length check
+  for index in 0..<lambdaList.ordinal.len:
+    let val = eval(rt, env, rest.car)
+
+    rest = LispList(rest.cdr)
+    newEnv.variables[lambdaList.ordinal[index].name.id] = val
 
   return newEnv
 
