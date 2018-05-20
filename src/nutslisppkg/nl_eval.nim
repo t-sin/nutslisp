@@ -86,7 +86,7 @@ proc evalLambdaExp(rt: LispRuntime,
     fn.lambdaList = makeLispObject[LispLambdaList]()
   else:
     fn.lambdaList = parseArgs(LispList(args.car))
-  fn.body = args.cdr
+  fn.body = LispList(args.cdr).car
   return fn
 
 proc evalProgn(rt: LispRuntime,
