@@ -154,7 +154,7 @@ proc funcall(rt: LispRuntime,
 
   else:
     var newEnv = bindArgs(rt, env, fn.lambdaList, args)
-    return evalProgn(rt, newEnv, LispList(fn.body))
+    return eval(rt, newEnv, fn.body)
 
 proc eval*(rt: LispRuntime,
            env: LispLexicalEnvironment,
